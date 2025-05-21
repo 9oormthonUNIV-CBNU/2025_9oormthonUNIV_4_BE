@@ -30,7 +30,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 응답 헤더에 JWT 포함
         response.addHeader("Authorization", "Bearer " + token);
 
-        // 또는 프론트엔드 주소로 리다이렉트
+        // or 프론트엔드 주소로 리다이렉트
         response.sendRedirect("http://localhost:3000/oauth-redirect?token=" + token);
     }
 }
