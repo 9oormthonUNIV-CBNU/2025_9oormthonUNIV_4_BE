@@ -22,7 +22,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth -> oauth
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true) // 로그인 성공 후 리다이렉션 페이지 "/" -> 다른걸로
+                        .defaultSuccessUrl("/login-success", true) // 로그인 성공 후 리다이렉션 페이지 "/" -> 다른걸로
                 );
         return http.build();
     }
