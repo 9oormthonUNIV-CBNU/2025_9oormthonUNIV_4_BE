@@ -40,7 +40,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // JWT 토큰 생성
-        String token = jwtProvider.createToken(user.getId());
+        String token = jwtProvider.createToken(user.getId(), user.getEmail());
 
         // 리다이렉트: 프론트가 없으니 login-success로
         response.sendRedirect("/login-success?token=" + token);

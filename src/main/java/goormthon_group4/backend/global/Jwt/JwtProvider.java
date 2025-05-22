@@ -21,12 +21,13 @@ public class JwtProvider {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    public String createToken(Long userId) {
+    public String createToken(Long userId, String email) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + EXPIRATION_TIME);
 
         return Jwts.builder()
                 .subject(String.valueOf(userId))
+                .claim("email", email)
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(key)
