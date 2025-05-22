@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,24 +30,32 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 카카오에서 사용자 정보 불러오기
         OAuth2User oauth2User = super.loadUser(userRequest);
 
+        System.out.println("=== Kakao attributes ===");
+        System.out.println(oauth2User.getAttributes());
+
         // 카카오 계정 정보에서 이메일 꺼내기
-        Map<String, Object> kakaoAccount = (Map<String, Object>) oauth2User.getAttributes().get("kakao_account");
+        Map<String, Object> attributes = oauth2User.getAttributes();
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         String email = (String) kakaoAccount.get("email");
 
-        // 이메일로 사용자 검색, 없으면 새로 저장
+        // DB에 사용자 저장
         userRepository.findByEmail(email)
                 .orElseGet(() -> userRepository.save(
                         User.builder()
-                                .email(email)
-                                .password("") // 소셜 로그인은 비밀번호 필요 없음
-                                .build()
+                        .email(email)
+                        .password("")
+                        .build()
                 ));
+
+        // attributes에 email 직접 넣어줌
+        Map<String, Object> customAttributes = new HashMap<>();
+        customAttributes.put("email", email);
 
         // ROLE_USER 권한 부여해서 반환
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-                oauth2User.getAttributes(),
-                "id"
+                customAttributes,
+                "email"
         );
     }
 }
