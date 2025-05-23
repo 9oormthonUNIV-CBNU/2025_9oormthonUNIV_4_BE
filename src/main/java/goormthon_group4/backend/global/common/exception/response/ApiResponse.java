@@ -23,12 +23,12 @@ public class ApiResponse<T> {
   }
 
   // ✅ 성공 응답 (SuccessCode 기반)
-  public static <T> ApiResponse<T> success(SuccessCode code, T data) {
+  public static <T> ApiResponse<T> success( T data) {
     return ApiResponse.<T>builder()
         .success(true)
-        .status(code.getHttpStatus().value())
-        .code(code.getCode())
-        .message(code.getMessage())
+        .status(SuccessCode.OK.getHttpStatus().value())
+        .code(SuccessCode.OK.getCode())
+        .message(SuccessCode.OK.getMessage())
         .data(data)
         .build();
   }
