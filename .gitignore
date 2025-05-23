@@ -39,4 +39,4 @@ out/
 ### 환경 설정 ###
 application-*.yml
 application.yml
-.env
+src/main/resources/.env
