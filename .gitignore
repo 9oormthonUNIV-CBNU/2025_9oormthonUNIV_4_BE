@@ -39,8 +39,11 @@ out/
 ### 환경 설정 ###
 application-*.yml
 application.yml
+
 .env
 
 # Docker
 *.pid
 docker-compose.override.yml
+src/main/resources/.env
+
