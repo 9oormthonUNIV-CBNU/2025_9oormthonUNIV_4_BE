@@ -1,6 +1,10 @@
 package goormthon_group4.backend.domain.user.entity;
 
+import goormthon_group4.backend.domain.application.entity.Application;
+import goormthon_group4.backend.domain.team.entity.Team;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -25,6 +29,24 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Team> leadingTeams = new ArrayList<>();
+
+    public void addTeam(Team team) {
+        leadingTeams.add(team);
+//        team.setUser(this);
+    }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Application> applications = new ArrayList<>();
+
+    public void addApplication(Application application) {
+        applications.add(application);
+//        application.setUser(this);
+
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -34,5 +56,9 @@ public class User {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+
+
+
 }
 
