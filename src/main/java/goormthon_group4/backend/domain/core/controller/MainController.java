@@ -26,13 +26,13 @@ public class MainController {
   // ✅ DTO 유효성 검증 (@RequestBody + @Valid)
   @PostMapping("/validate-body")
   public ApiResponse<String> validateBody(@RequestBody @Validated TestRequest request) {
-    return ApiResponse.success(SuccessCode.OK, "요청이 성공적으로 처리되었습니다.");
+    return ApiResponse.success("파라미터가 유효합니다.");
   }
 
   // ✅ RequestParam 검증
   @GetMapping("/validate-param")
   public ApiResponse<String> validateParam(@RequestParam @Min(value = 1, message = "id는 1 이상이어야 합니다.") int id) {
-    return ApiResponse.success(SuccessCode.OK, "파라미터가 유효합니다.");
+    return ApiResponse.success( "파라미터가 유효합니다.");
   }
 
   // ✅ 커스텀 예외 발생
@@ -50,7 +50,7 @@ public class MainController {
   // ✅ 정상 응답
   @GetMapping("/success")
   public ApiResponse<String> success() {
-    return ApiResponse.success(SuccessCode.OK, "정상 응답입니다.");
+    return ApiResponse.success( "정상 응답입니다.");
   }
 
   // ✅ Request DTO
