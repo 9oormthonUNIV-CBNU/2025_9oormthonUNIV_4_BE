@@ -2,15 +2,11 @@ package goormthon_group4.backend.domain.core.controller;
 
 import goormthon_group4.backend.global.common.exception.CustomException;
 import goormthon_group4.backend.global.common.exception.code.ErrorCode;
-import goormthon_group4.backend.global.common.exception.code.SuccessCode;
 import goormthon_group4.backend.global.common.exception.response.ApiResponse;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
