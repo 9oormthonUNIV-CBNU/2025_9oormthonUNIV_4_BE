@@ -1,8 +1,8 @@
 package goormthon_group4.backend.global.common.exception;
 
+import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @Builder

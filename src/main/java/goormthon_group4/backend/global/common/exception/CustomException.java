@@ -1,5 +1,6 @@
 package goormthon_group4.backend.global.common.exception;
 
+import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import lombok.Getter;
 
 @Getter

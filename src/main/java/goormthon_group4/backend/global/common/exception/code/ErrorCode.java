@@ -1,4 +1,4 @@
-package goormthon_group4.backend.global.common.exception;
+package goormthon_group4.backend.global.common.exception.code;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
