@@ -44,4 +44,11 @@ public class UserInfo {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void update(String nickname, String major, String university, String introduce) {
+        this.nickname = nickname;
+        this.major = major;
+        this.university = university;
+        this.introduce = introduce;
+    }
 }
