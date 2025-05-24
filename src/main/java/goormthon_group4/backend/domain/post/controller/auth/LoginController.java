@@ -1,4 +1,4 @@
-package goormthon_group4.backend.domain.post.controller.auth.controller;
+package goormthon_group4.backend.domain.post.controller.auth;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -22,6 +22,13 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private boolean isUniversityAuthenticated;
+
+    public void authenticatedUniversity() {
+        this.isUniversityAuthenticated = true;
+    }
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -34,5 +41,7 @@ public class User {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+
 }
 

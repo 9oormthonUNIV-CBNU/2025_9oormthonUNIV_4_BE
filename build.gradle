@@ -21,6 +21,9 @@ configurations {
 
 repositories {
     mavenCentral()
+
+    // UNIVCERT API
+    maven{url 'https://jitpack.io'}
 }
 
 dependencies {
@@ -50,6 +53,10 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
+    // UNIVCERT
+    implementation("com.github.in-seo:univcert:master-SNAPSHOT") {
+        exclude group: "org.hamcrest", module: "hamcrest-core"
+    }
 }
 
 tasks.named('test') {
