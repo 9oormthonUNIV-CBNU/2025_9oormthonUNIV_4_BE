@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "project_category")
+@Table(name = "project_category", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"project_id", "category_id"})
+})
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
@@ -14,10 +16,11 @@ public class ProjectCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
