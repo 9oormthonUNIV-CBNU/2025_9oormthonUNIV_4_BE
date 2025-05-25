@@ -49,8 +49,8 @@ public class Project extends BaseEntity {
     @Column(name = "file_url")
     private String fileUrl;
 
-    @Column(name = "project_image")
-    private String projectImage;
+    @Column(name = "img_url")
+    private String imageUrl;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectCategory> categories = new ArrayList<>();

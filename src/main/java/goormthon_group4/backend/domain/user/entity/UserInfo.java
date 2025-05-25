@@ -1,5 +1,6 @@
 package goormthon_group4.backend.domain.user.entity;
 
+import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class UserInfo {
+public class UserInfo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,23 +26,23 @@ public class UserInfo {
     @Column(length = 50, nullable = false)
     private String university;
 
+    @Column(length = 100, nullable = false)
+    private String universityEmail;
+
     @Column(columnDefinition = "TEXT")
     private String introduce;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    @Column(nullable = true)
+    private String imgUrl;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    public void update(String nickname, String major, String university, String universityEmail,
+                       String introduce, String imgUrl) {
+        this.nickname = nickname;
+        this.major = major;
+        this.university = university;
+        this.universityEmail = universityEmail;
+        this.introduce = introduce;
+        this.imgUrl = imgUrl;
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 }
