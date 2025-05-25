@@ -2,6 +2,7 @@ package goormthon_group4.backend.domain.user.entity;
 
 import goormthon_group4.backend.domain.application.entity.Application;
 import goormthon_group4.backend.domain.team.entity.Team;
+import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +27,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_info_id", nullable = true)
+    private UserInfo userInfo;
 
     @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -46,19 +48,5 @@ public class User {
 //        application.setUser(this);
 
     }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
-
-
-
 }
 
