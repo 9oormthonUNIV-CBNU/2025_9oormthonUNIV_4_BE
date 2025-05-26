@@ -10,7 +10,7 @@ public class AuthController {
 
     @GetMapping("/login-success")
     public String loginSuccessPage(@RequestParam String token, Model model) {
-        model.addAttribute("message", "카카오 로그인에 성공했습니다.");
+        model.addAttribute("message", "구글 로그인에 성공했습니다.");
         model.addAttribute("token", token);
         return "login-success";
     }
