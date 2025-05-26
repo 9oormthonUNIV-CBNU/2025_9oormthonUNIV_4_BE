@@ -24,12 +24,21 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String password;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.USER;
 
+    private String socialId;
+
+<<<<<<< HEAD
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_info_id", nullable = true)
     private UserInfo userInfo;
+=======
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+>>>>>>> 5648c99 (feat : 구글 oauth 로그인 구현, JWT 인증 완료)
 
     @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
