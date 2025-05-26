@@ -8,8 +8,8 @@ import goormthon_group4.backend.domain.user.repository.UserInfoRepository;
 import goormthon_group4.backend.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +18,11 @@ public class UserInfoService {
     private final UserRepository userRepository;
     private final UserInfoRepository userInfoRepository;
 
-    public String getAuthenticatedEmail() {
+    // 인증된 사용자의 이메일 가져오기
+    private String getAuthenticatedEmail() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
-    @Transactional
     public void saveUserInfo(UserInfoRequestDto dto) {
         String email = getAuthenticatedEmail();
         User user = userRepository.findByEmail(email)
@@ -53,7 +53,7 @@ public class UserInfoService {
             throw new RuntimeException("UserInfo를 찾을 수 없습니다.");
         }
 
-        return  new UserInfoResponseDto(userInfo);
+        return new UserInfoResponseDto(userInfo);
     }
 
     public void updateUserInfo(UserInfoRequestDto dto) {
@@ -62,14 +62,15 @@ public class UserInfoService {
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
         UserInfo userInfo = user.getUserInfo();
-        if(userInfo == null) {
+        if (userInfo == null) {
             throw new RuntimeException("UserInfo를 찾을 수 없습니다.");
         }
 
         if (!userInfo.getNickname().equals(dto.getNickname()) &&
-        userInfoRepository.existsByNickname(dto.getNickname())) {
+                userInfoRepository.existsByNickname(dto.getNickname())) {
             throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
         }
+
         userInfo.update(dto.getNickname(), dto.getMajor(), dto.getUniversity(), dto.getIntroduce());
     }
 }
