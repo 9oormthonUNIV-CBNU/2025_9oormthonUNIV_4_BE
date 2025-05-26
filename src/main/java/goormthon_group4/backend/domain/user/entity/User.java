@@ -24,6 +24,16 @@ public class User {
     @JoinColumn(name = "user_info_id")
     private UserInfo userInfo;
 
+    @Column(name = "is_univ_authenticated", nullable = false)
+    private boolean universityAuthenticated = false;
+
+    public void authenticateUniversity() {
+        this.universityAuthenticated = true;
+    }
+
+    public boolean isUniversityAuthenticated() {
+        return this.universityAuthenticated;
+    }
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -36,10 +46,6 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public UserInfo getUserInfo() {
-        return userInfo;
     }
 }
 
