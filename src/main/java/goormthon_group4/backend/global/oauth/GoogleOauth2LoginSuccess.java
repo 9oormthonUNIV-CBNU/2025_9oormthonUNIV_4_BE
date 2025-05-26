@@ -55,12 +55,16 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         System.out.println(jwtToken);
 
         // 1. 클라이언트 redirect 방식으로 토큰 전달
-        // response.sendRedirect("http://localhost:8080?token=" + jwtToken);
+        // response.sendRedirect("http://localhost:8080/login-success?token=" + jwtToken);
 
         // 2. jwt 쿠키 저장
         Cookie jwtCookie = new Cookie("token", jwtToken);
+        jwtCookie.setHttpOnly(true);
         jwtCookie.setPath("/"); // 모든 경로에서 쿠키 사용 가능
-        response.sendRedirect("http://localhost:8080?token=" + jwtCookie.getValue());
-    }
+        jwtCookie.setMaxAge(3600);   // 유효 시간 (초 단위)
+        response.addCookie(jwtCookie);
 
+        // 프론트 없이 백엔드에서 확인할 거면 간단한 텍스트로 응답
+        response.getWriter().write("JWT 토큰이 쿠키에 저장되었습니다");
+    }
 }

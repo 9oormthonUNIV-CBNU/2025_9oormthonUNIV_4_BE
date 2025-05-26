@@ -16,14 +16,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String socialId;
+
     @Column(nullable = false, unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Role role = Role.USER;
-
-    private String socialId;
 
     private LocalDateTime createdAt;
 
