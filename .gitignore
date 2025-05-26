@@ -47,3 +47,5 @@ application.yml
 docker-compose.override.yml
 src/main/resources/.env
 
+# macOS system files
+.DS_Store

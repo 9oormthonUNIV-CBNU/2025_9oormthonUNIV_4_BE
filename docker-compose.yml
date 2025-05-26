@@ -17,7 +17,7 @@ services:
     restart: always
     container_name: goormthon-db
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: youngh29ktj!
       MYSQL_DATABASE: goormthon
     ports:
       - "3307:3306"
