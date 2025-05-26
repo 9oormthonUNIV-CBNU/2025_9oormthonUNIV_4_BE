@@ -26,23 +26,24 @@ public class UserInfo extends BaseEntity {
     @Column(length = 50, nullable = false)
     private String university;
 
-    @Column(length = 100, nullable = false)
-    private String universityEmail;
-
     @Column(columnDefinition = "TEXT")
     private String introduce;
 
     @Column(nullable = true)
     private String imgUrl;
 
-    public void update(String nickname, String major, String university, String universityEmail,
-                       String introduce, String imgUrl) {
+    @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY)
+    private User user;
+
+    public void update(String nickname, String major, String university, String introduce) {
         this.nickname = nickname;
         this.major = major;
         this.university = university;
-        this.universityEmail = universityEmail;
         this.introduce = introduce;
-        this.imgUrl = imgUrl;
     }
 
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

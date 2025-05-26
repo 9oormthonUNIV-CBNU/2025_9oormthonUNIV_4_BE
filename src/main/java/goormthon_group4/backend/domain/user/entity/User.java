@@ -37,7 +37,7 @@ public class User extends BaseEntity {
     private LocalDateTime updatedAt;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_info_id", nullable = true)
+    @JoinColumn(name = "user_info_id")
     private UserInfo userInfo;
 
     @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, orphanRemoval = true)

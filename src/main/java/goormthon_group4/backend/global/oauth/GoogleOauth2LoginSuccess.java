@@ -35,6 +35,7 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
         String openId = oauth2User.getAttribute("sub");
         String email = oauth2User.getAttribute("email");
+        String picture = oauth2User.getAttribute("picture"); // 프로필 이미지 URL
 
         // 회원가입 여부 확인
         Optional<User> optionalUser = userRepository.findByEmail(email);
