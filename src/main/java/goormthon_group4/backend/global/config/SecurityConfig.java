@@ -1,9 +1,6 @@
 package goormthon_group4.backend.global.config;
 
 
-import goormthon_group4.backend.global.Jwt.JwtAuthenticationFilter;
-import goormthon_group4.backend.global.oauth.CustomOAuth2UserService;
-import goormthon_group4.backend.global.oauth.OAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
