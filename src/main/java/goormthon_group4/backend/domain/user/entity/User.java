@@ -1,16 +1,10 @@
 package goormthon_group4.backend.domain.user.entity;
 
-import goormthon_group4.backend.domain.application.entity.Application;
-import goormthon_group4.backend.domain.team.entity.Team;
-import goormthon_group4.backend.domain.user.entity.Role;
-import goormthon_group4.backend.domain.user.entity.UserInfo;
 import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -23,35 +17,35 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String socialId;
-
     @Column(nullable = false, unique = true)
     private String email;
+
+    private String socialId;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Role role = Role.USER;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_info_id", nullable = true)
+    // 단방향 매핑 User가 FK 가지고 있음
+    @Setter
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_info_id")
     private UserInfo userInfo;
 
-    @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Team> leadingTeams = new ArrayList<>();
+    @Getter
+    @Column(name = "is_univ_authenticated", nullable = false)
+    private boolean universityAuthenticated = false;
 
-    public void addTeam(Team team) {
-        leadingTeams.add(team);
+    public void authenticateUniversity() {
+        this.universityAuthenticated = true;
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Application> applications = new ArrayList<>();
-
-    public void addApplication(Application application) {
-        applications.add(application);
+    public User(String email, String socialId, Role role, UserInfo userInfo) {
+        this.email = email;
+        this.socialId = socialId;
+        this.role = role;
+        this.userInfo = userInfo;
     }
+
 }
+

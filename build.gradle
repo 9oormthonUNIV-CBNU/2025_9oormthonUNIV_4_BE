@@ -21,6 +21,8 @@ configurations {
 
 repositories {
     mavenCentral()
+    // UnivCert
+    maven{url 'https://jitpack.io'}
 }
 
 dependencies {
@@ -42,19 +44,18 @@ dependencies {
     //thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-    // dotenv-java, 로컬에서는 dontenv 이용, 배포할 때는 docker로 감싸서
-    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
-
     // JWT 토큰 생성 위한 라이브러리
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
+    // UnivCert
+    implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
+
     // Amazon S3 - SDK for Java 2.x
     implementation platform('software.amazon.awssdk:bom:2.27.21')
     implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:s3-transfer-manager'
-
 
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'

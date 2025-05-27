@@ -41,6 +41,7 @@ application-*.yml
 application.yml
 
 .env
+127.0.0.1:0:
 
 # Docker
 *.pid
