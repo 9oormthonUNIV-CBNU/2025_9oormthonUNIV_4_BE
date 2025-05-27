@@ -38,7 +38,6 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/", "/login",
                                 "/oauth/**", "/oauth2/**",
-                                "/kakao-login-button.png",
                                 "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
                         ).permitAll()
                         .requestMatchers("/api/test/protected").authenticated()
