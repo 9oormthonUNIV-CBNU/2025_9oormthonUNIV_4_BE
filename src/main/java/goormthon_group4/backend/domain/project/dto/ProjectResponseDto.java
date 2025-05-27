@@ -18,11 +18,14 @@ public class ProjectResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String title;
+    private String description;
     private String content;
     private ProjectStatus status;
     private LocalDate startAt;
     private LocalDate endAt;
     private String email;
     private String fileUrl;
-    private List<String> categories;
+    private String imageUrl;
+    private List<CategoryResponseDto> categories;
+
 }
