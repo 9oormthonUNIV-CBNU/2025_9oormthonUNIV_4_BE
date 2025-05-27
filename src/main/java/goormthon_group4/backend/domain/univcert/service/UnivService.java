@@ -7,7 +7,6 @@ import goormthon_group4.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Map;
@@ -40,7 +39,6 @@ public class UnivService {
         }
     }
 
-    @Transactional
     public String univCertifyCode(UnivCodeRequestDto univCodeRequestDto, User user) throws IOException {
         Map<String, Object> response = UnivCert.certifyCode(
                 univCertAPIKey,
