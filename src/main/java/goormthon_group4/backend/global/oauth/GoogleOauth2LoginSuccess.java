@@ -66,6 +66,9 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         response.addCookie(jwtCookie);
 
         // 프론트 없이 백엔드에서 확인할 거면 간단한 텍스트로 응답
-        response.getWriter().write("JWT 토큰이 쿠키에 저장되었습니다");
+        // 리디렉션 없이 응답만 주고 끝냄
+        response.setContentType("text/plain;charset=UTF-8");
+        response.getWriter().write("JWT 토큰이 쿠키에 저장되었습니다.");
+        response.getWriter().flush();
     }
 }
