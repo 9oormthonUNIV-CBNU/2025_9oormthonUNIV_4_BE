@@ -29,8 +29,7 @@ public class Project extends BaseEntity {
     @Column(nullable = false)
     private String description;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Enumerated(EnumType.STRING)
