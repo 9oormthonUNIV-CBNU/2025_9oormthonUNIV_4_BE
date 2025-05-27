@@ -52,6 +52,11 @@ dependencies {
     // UnivCert
     implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
 
+    // Amazon S3 - SDK for Java 2.x
+    implementation platform('software.amazon.awssdk:bom:2.27.21')
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:s3-transfer-manager'
+
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
