@@ -9,7 +9,11 @@ import goormthon_group4.backend.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.boot.origin.Origin.from;
+
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class UserInfoService {
@@ -38,6 +42,12 @@ public class UserInfoService {
                 .introduce(dto.getIntroduce())
                 .user(user)
                 .build();
+        // 양방향 연관관계 설정
+        user.setUserInfo(userInfo);
+
+        // 둘 중 하나만 save하면 됨 (cascade = ALL 설정 시)
+        userRepository.save(user); // user -> userInfo 같이 저장됨
+
 
         userInfoRepository.save(userInfo);
     }
@@ -55,6 +65,7 @@ public class UserInfoService {
         return new UserInfoResponseDto(userInfo);
     }
 
+    @Transactional
     public void updateUserInfo(UserInfoRequestDto dto) {
         String email = getAuthenticatedEmail();
         User user = userRepository.findByEmail(email)

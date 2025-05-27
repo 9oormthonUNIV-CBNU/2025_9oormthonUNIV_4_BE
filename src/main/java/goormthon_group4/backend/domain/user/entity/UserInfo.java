@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class UserInfo extends BaseEntity {
-
+public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,7 +42,8 @@ public class UserInfo extends BaseEntity {
     }
 
     @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+    public void preUpdate() {
+        LocalDateTime now = LocalDateTime.now();
     }
+
 }

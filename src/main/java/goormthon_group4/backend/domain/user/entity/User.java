@@ -1,5 +1,6 @@
 package goormthon_group4.backend.domain.user.entity;
 
+import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,11 +20,19 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    // 단방향 매핑 (User가 삭제되면 UserInfo도 삭제됨)
+    private String socialId;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.USER;
+
+    // 단방향 매핑 User가 FK 가지고 있음
+    @Setter
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_info_id")
     private UserInfo userInfo;
 
+    @Getter
     @Column(name = "is_univ_authenticated", nullable = false)
     private boolean universityAuthenticated = false;
 
@@ -31,21 +40,12 @@ public class User {
         this.universityAuthenticated = true;
     }
 
-    public boolean isUniversityAuthenticated() {
-        return this.universityAuthenticated;
+    public User(String email, String socialId, Role role, UserInfo userInfo) {
+        this.email = email;
+        this.socialId = socialId;
+        this.role = role;
+        this.userInfo = userInfo;
     }
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 }
 
