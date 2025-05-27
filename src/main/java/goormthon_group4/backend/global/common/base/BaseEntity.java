@@ -20,5 +20,5 @@ public abstract class BaseEntity {
 
   @Column(columnDefinition = "TIMESTAMP(6)", nullable = false)
   @LastModifiedDate
-  private LocalDateTime updatedAt;
+  protected LocalDateTime updatedAt;
 }

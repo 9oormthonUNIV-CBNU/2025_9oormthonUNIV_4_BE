@@ -1,57 +1,41 @@
 package goormthon_group4.backend.global.Jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtProvider {
-    private final Key key;
-    private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간
 
-    public JwtProvider(@Value("${jwt.secret}") String secret) {
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+    private final String secretKey;
+    private final int expiration;
+    private final SecretKey SECRET_KEY;
+
+    public JwtProvider(@Value("${jwt.secret}") String secretKey,
+                       @Value("${jwt.expiration}") int expiration) {
+        this.secretKey = secretKey;
+        this.expiration = expiration;
+        this.SECRET_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
-    public String createToken(Long userId, String email) {
+    public String createToken(String email, String role) {
+        Claims claims = Jwts.claims().setSubject(email).build();
+
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + EXPIRATION_TIME);
 
         return Jwts.builder()
-                .subject(String.valueOf(userId))
-                .claim("email", email)
+                .subject(email)
+                .claim("role", role)
                 .issuedAt(now)
-                .expiration(expiry)
-                .signWith(key)
+                .expiration(new Date(now.getTime() + expiration * 60 * 1000L))
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
                 .compact();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .verifyWith((SecretKey) key)
-                    .build()
-                    .parseSignedClaims(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    public Long getUserId(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith((SecretKey) key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-        return Long.parseLong(claims.getSubject());
     }
 }
