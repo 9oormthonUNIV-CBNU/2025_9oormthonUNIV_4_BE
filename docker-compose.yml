@@ -2,7 +2,6 @@ services:
   backend:
     image: minwu1234/9roomthon-4-team:latest
     restart: always
-    build: .
     ports:
       - "8080:8080"
     depends_on:
@@ -13,7 +12,7 @@ services:
   db:
     image: mysql:8.0
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -h goormthon-db -uroot -p${MYSQL_ROOT_PASSWORD}" ]
+      test: [ "CMD-SHELL", "mysqladmin ping -h goormthon-db -uroot -p1234" ]
       interval: 10s
       timeout: 5s
       retries: 5
