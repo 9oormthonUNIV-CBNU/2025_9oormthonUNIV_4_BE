@@ -18,8 +18,11 @@ services:
       timeout: 5s
       retries: 5
     container_name: goormthon-db
-    env_file:
-      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=sample
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=12345
     ports:
       - "3306:3306"
     volumes:
