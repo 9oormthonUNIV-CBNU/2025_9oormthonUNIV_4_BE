@@ -1,5 +1,6 @@
-package goormthon_group4.backend.domain.team.entity;
+package goormthon_group4.backend.domain.member;
 
+import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
@@ -7,7 +8,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "member")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder

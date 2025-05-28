@@ -41,6 +41,7 @@ out/
 
 # Docker
 *.pid
+docker-compose.yml
 docker-compose.override.yml
 src/main/resources/.env
 
