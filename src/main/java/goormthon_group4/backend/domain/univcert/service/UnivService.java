@@ -4,6 +4,8 @@ import com.univcert.api.UnivCert;
 import goormthon_group4.backend.domain.univcert.dto.UnivCodeRequestDto;
 import goormthon_group4.backend.domain.univcert.dto.UnivRequestDto;
 import goormthon_group4.backend.domain.user.entity.User;
+import goormthon_group4.backend.domain.user.repository.UserRepository;
+import goormthon_group4.backend.global.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

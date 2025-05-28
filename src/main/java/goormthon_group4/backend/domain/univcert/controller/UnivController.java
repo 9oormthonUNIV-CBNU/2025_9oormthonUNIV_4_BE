@@ -4,6 +4,7 @@ import goormthon_group4.backend.domain.univcert.dto.UnivCodeRequestDto;
 import goormthon_group4.backend.domain.univcert.dto.UnivRequestDto;
 import goormthon_group4.backend.domain.univcert.service.UnivService;
 import goormthon_group4.backend.domain.user.entity.User;
+import goormthon_group4.backend.global.auth.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
