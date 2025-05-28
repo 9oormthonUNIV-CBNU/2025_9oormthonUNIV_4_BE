@@ -1,5 +1,6 @@
 services:
   backend:
+    image: minwu1234/9roomthon-4-team:latest
     restart: always
     build: .
     ports:
