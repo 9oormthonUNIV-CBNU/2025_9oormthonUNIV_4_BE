@@ -1,12 +1,9 @@
-version: "3.9"
-
 services:
   backend:
+    restart: always
     build: .
     ports:
       - "8080:8080"
-    env_file:
-      - .env
     depends_on:
       - db
     networks:
@@ -14,15 +11,29 @@ services:
 
   db:
     image: mysql:8.0
-    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h goormthon-db -uroot -p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     container_name: goormthon-db
-    environment:
-      MYSQL_ROOT_PASSWORD: youngh29ktj!
-      MYSQL_DATABASE: goormthon
+    env_file:
+      - .env
     ports:
-      - "3307:3306"
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
     networks:
       - app-network
 
+
 networks:
   app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+
+
+
+
