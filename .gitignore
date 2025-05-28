@@ -36,10 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-### 환경 설정 ###
-application-*.yml
-application.yml
-
 .env
 127.0.0.1:0:
 
