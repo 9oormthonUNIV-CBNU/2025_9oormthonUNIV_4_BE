@@ -35,14 +35,6 @@ public class UnivService {
         return "인증코드가 이메일로 전송되었습니다.";
     }
 
-    private void validate(Map<String, Object> response) {
-        boolean success = (boolean) response.get("success");
-        String message = (String) response.get("message");
-        if(!success) {
-            throw new IllegalArgumentException("학교 인증 실패 : " + message);
-        }
-    }
-
     @Transactional
     public String univCertifyCode(UnivCodeRequestDto univCodeRequestDto, CustomUserDetails customUserDetails) throws IOException {
         Map<String, Object> response = UnivCert.certifyCode(
@@ -65,6 +57,14 @@ public class UnivService {
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
         user.authenticateUniversity();
+    }
+
+    private void validate(Map<String, Object> response) {
+        boolean success = (boolean) response.get("success");
+        String message = (String) response.get("message");
+        if(!success) {
+            throw new IllegalArgumentException("학교 인증 실패 : " + message);
+        }
     }
 
     @Transactional
