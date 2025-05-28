@@ -20,7 +20,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=1234
       - MYSQL_DATABASE=sample
-      - MYSQL_USER=user
+      - MYSQL_USER=userab
       - MYSQL_PASSWORD=12345
     ports:
       - "3306:3306"
