@@ -40,7 +40,7 @@ jobs:
       run: ./gradlew build -x test
 
     - name: Docker Image Build
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }} .
+      run: docker build -t minwu1234/9roomthon-4-team:latest .
 
     - name: Docker Hub Login
       uses: docker/login-action@v3
@@ -49,7 +49,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: Docker Hub Push
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}
+      run: docker push minwu1234/9roomthon-4-team:latest
 
   cd:
     name: CD - Deploy to EC2
