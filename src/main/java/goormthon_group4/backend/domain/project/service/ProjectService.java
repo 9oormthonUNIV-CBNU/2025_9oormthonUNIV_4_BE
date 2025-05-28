@@ -54,9 +54,17 @@ public class ProjectService {
     @Transactional
     public ProjectResponseDto createProject(ProjectRequestDto dto) {
         Project project = buildFromDto(dto);
+
         List<ProjectCategory> pcs = dto.getCategories().stream()
-                .map(cr -> toProjectCategory(cr, project))
+                // 1) 제목만 뽑아서 trim
+                .map(CategoryRequestDto::getTitle)
+                .map(String::trim)
+                // 2) 중복 제거
+                .distinct()
+                // 3) 헬퍼로 기존 조회 / 신규 생성 + 매핑
+                .map(title -> toProjectCategoryByTitle(title, project))
                 .collect(Collectors.toList());
+
         project.setCategories(pcs);
         return mapToResponse(projectRepository.save(project));
     }
@@ -79,12 +87,17 @@ public class ProjectService {
 
         // 카테고리 재설정
         project.getCategories().clear();
+        projectRepository.flush();
         List<ProjectCategory> updated = dto.getCategories().stream()
-                .map(cr -> toProjectCategory(cr, project))
+                .map(CategoryRequestDto::getTitle)
+                .map(String::trim)
+                .distinct()
+                .map(title -> toProjectCategoryByTitle(title, project))
                 .collect(Collectors.toList());
         project.getCategories().addAll(updated);
 
-        return mapToResponse(projectRepository.save(project));
+        projectRepository.save(project);
+        return mapToResponse(project);
     }
 
     @Transactional
@@ -95,20 +108,15 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
-    private ProjectCategory toProjectCategory(CategoryRequestDto cr, Project project) {
-        Category category;
-        if (cr.getId() != null) {
-            category = categoryRepository.findById(cr.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 id=" + cr.getId()));
-        } else {
-            category = categoryRepository.findByTitle(cr.getTitle())
-                    .orElseGet(() -> categoryRepository.save(
-                            Category.builder().title(cr.getTitle()).build()
-                    ));
-        }
+    private ProjectCategory toProjectCategoryByTitle(String title, Project project) {
+        String clean = title.trim();
+        Category cat = categoryRepository.findByTitle(clean)
+                .orElseGet(() -> categoryRepository.save(Category.builder()
+                        .title(clean)
+                        .build()));
         return ProjectCategory.builder()
                 .project(project)
-                .category(category)
+                .category(cat)
                 .build();
     }
 
