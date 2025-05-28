@@ -19,22 +19,25 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/univcert")
-@Tag(name = "대학 인증 api", description = "대학 인증 api")
 
 public class UnivController {
     private final UnivService univService;
 
-    @Operation(description = "학교 인증")
     @PostMapping
     public ResponseEntity<String> univCertify(@RequestBody UnivRequestDto univRequestDto,
-                                              @AuthenticationPrincipal User user) throws IOException {
-        return ResponseEntity.ok(univService.univCertify(univRequestDto, user));
+                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        return ResponseEntity.ok(univService.univCertify(univRequestDto, customUserDetails));
     }
 
-    @Operation(description = "학교 인증")
     @PostMapping("/code")
     public ResponseEntity<String> univCertifyCode(@RequestBody UnivCodeRequestDto univCodeRequestDto,
-                                                  @AuthenticationPrincipal User user) throws IOException {
-        return ResponseEntity.ok(univService.univCertifyCode(univCodeRequestDto, user));
+                                                  @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        return ResponseEntity.ok(univService.univCertifyCode(univCodeRequestDto, customUserDetails));
+    }
+
+    @PostMapping("/clear")
+    public ResponseEntity<String> univClear(@RequestBody UnivRequestDto univRequestDto,
+                                            @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        return ResponseEntity.ok(univService.univClear(univRequestDto, customUserDetails));
     }
 }
