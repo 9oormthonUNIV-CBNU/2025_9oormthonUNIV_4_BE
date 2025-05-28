@@ -1,5 +1,8 @@
 package goormthon_group4.backend.global.oauth;
 
+import goormthon_group4.backend.domain.user.entity.User;
+import goormthon_group4.backend.domain.user.repository.UserRepository;
+import goormthon_group4.backend.global.auth.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
@@ -12,24 +15,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
 
+    private final UserRepository userRepository;
     @Value("${jwt.secret}")
     private String secretKey;
+
+    public JwtTokenFilter(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -59,15 +61,16 @@ public class JwtTokenFilter extends GenericFilterBean {
                     .parseSignedClaims(jwtToken);
 
             Claims claims = parsedJwt.getPayload();
+            String email = claims.getSubject();
 
-            // 권한 정보 설정
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get("role")));
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다." + email));
 
-            // Spring Security User 객체로 인증 설정
-            UserDetails userDetails = new User(claims.getSubject(), "", authorities);
+            CustomUserDetails customUserDetails = new CustomUserDetails(user);
+
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails, jwtToken, userDetails.getAuthorities());
+                    customUserDetails, jwtToken, customUserDetails.getAuthorities());
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (Exception e) {
