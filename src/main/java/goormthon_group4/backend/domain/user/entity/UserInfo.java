@@ -3,6 +3,7 @@ package goormthon_group4.backend.domain.user.entity;
 import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +12,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class UserInfo {
+@Transactional
+public class UserInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,11 +36,12 @@ public class UserInfo {
     @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY)
     private User user;
 
-    public void update(String nickname, String major, String university, String introduce) {
+    public void update(String nickname, String major, String university, String introduce, String imgUrl) {
         this.nickname = nickname;
         this.major = major;
         this.university = university;
         this.introduce = introduce;
+        this.imgUrl = imgUrl;
     }
 
     @PreUpdate

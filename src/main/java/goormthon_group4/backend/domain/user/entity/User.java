@@ -1,7 +1,7 @@
 package goormthon_group4.backend.domain.user.entity;
 
 import goormthon_group4.backend.domain.application.entity.Application;
-import goormthon_group4.backend.domain.member.Member;
+import goormthon_group4.backend.domain.member.entity.Member;
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
