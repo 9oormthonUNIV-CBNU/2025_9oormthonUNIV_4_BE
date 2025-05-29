@@ -9,8 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
@@ -22,19 +20,27 @@ public class ProjectController {
     public ResponseEntity<Page<ProjectResponseDto>> listProjects(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(required = false) ProjectStatus status,
-            @RequestParam(required = false) String keyword
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "startAt") String sortBy // 정렬 기준만 받음
     ) {
-        int pageIndex = page <= 1 ? 0 : page - 1;
-
+        int pageIndex = Math.max(0, page - 1);
         Page<ProjectResponseDto> result;
+
         if (keyword != null && !keyword.isBlank()) {
-            result = projectService.searchProjects(keyword, pageIndex);
+            result = projectService.searchProjects(keyword, pageIndex, sortBy);
         } else if (status != null) {
-            result = projectService.getProjectsByStatus(status, pageIndex);
+            result = projectService.getProjectsByStatus(status, pageIndex, sortBy);
         } else {
-            result = projectService.getProjects(pageIndex);
+            result = projectService.getProjects(pageIndex, sortBy);
         }
+
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectResponseDto> getProjectDetail(@PathVariable Long id) {
+        ProjectResponseDto dto = projectService.getProjectDetail(id);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping

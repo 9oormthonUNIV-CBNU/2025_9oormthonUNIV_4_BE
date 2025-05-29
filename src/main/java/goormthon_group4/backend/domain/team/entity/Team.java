@@ -51,10 +51,12 @@ public class Team extends BaseEntity {
   @Column(nullable = true)
   private String fileUrl;
 
+  @Setter
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", nullable = false)
   private Project project;
 
+  @Setter
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "leader_id", nullable = false)
   private User leader;

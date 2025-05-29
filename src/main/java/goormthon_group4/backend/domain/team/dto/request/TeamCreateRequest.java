@@ -1,5 +1,6 @@
 package goormthon_group4.backend.domain.team.dto.request;
 
+import goormthon_group4.backend.domain.team.entity.TeamStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -29,5 +30,8 @@ public class TeamCreateRequest {
 
   private String fileUrl;  // 선택적
 
-  // status, leader는 서비스 단에서 세팅한다고 가정
+  @NotNull
+  private Long projectId;
+
+
 }
