@@ -1,6 +1,7 @@
 package goormthon_group4.backend.domain.application.service;
 
 import goormthon_group4.backend.domain.application.dto.request.ApplicationRequestDto;
+import goormthon_group4.backend.domain.application.dto.request.ApplicationStatusUpdateRequest;
 import goormthon_group4.backend.domain.application.dto.response.ApplicationResponseDto;
 import goormthon_group4.backend.domain.application.entity.Application;
 import goormthon_group4.backend.domain.application.entity.ApplicationStatus;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ApplicationService {
@@ -28,59 +32,95 @@ public class ApplicationService {
     private final S3Service s3Service;
 
     @Transactional
-    public ApplicationResponseDto submitApplication(ApplicationRequestDto applicationRequestDto,
-                                                    CustomUserDetails customUserDetails,
-                                                    MultipartFile multipartFile) {
-        User user = customUserDetails.getUser();
+    public ApplicationResponseDto submitApplication(Long teamId,
+                                                    ApplicationRequestDto requestDto,
+                                                    CustomUserDetails userDetails,
+                                                    MultipartFile file) {
+        Team team = getTeamOrThrow(teamId);
+        User user = userDetails.getUser();
 
-        // 팀 ID를 기반으로 팀 조회
-        Team team = teamRepository.findById(applicationRequestDto.getTeamId())
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        String fileUrl = uploadFileIfPresent(file);
 
-        // 포트폴리오 파일 업로드 (nullable)
-        String fileurl = null;
-        if(multipartFile != null && !multipartFile.isEmpty()) {
-            fileurl = s3Service.uploadFile(multipartFile);
-        }
-
-        // Application Entity 생성 및 저장
         Application application = Application.builder()
                 .status(ApplicationStatus.PENDING)
                 .team(team)
                 .user(user)
-                .name(applicationRequestDto.getName())
-                .email(applicationRequestDto.getEmail())
-                .phoneNumber(applicationRequestDto.getPhoneNumber())
-                .introduce(applicationRequestDto.getIntroduce())
-                .purpose(applicationRequestDto.getPurpose())
-                .skillExperience(applicationRequestDto.getSkillExperience())
-                .strengthsExperience(applicationRequestDto.getStrengthsExperience())
-                .additionalInfo(applicationRequestDto.getAdditionalInfo())
-                .fileUrl(fileurl)
+                .name(requestDto.getName())
+                .email(requestDto.getEmail())
+                .phoneNumber(requestDto.getPhoneNumber())
+                .introduce(requestDto.getIntroduce())
+                .purpose(requestDto.getPurpose())
+                .skillExperience(requestDto.getSkillExperience())
+                .strengthsExperience(requestDto.getStrengthsExperience())
+                .additionalInfo(requestDto.getAdditionalInfo())
+                .fileUrl(fileUrl)
                 .build();
 
         applicationRepository.save(application);
-        return new ApplicationResponseDto(application);
+        return ApplicationResponseDto.from(application);
     }
 
     @Transactional(readOnly = true)
-    public ApplicationResponseDto getApplication(Long teamId, Long userId, CustomUserDetails customUserDetails) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "팀을 찾을 수 없습니다."));
+    public ApplicationResponseDto getApplication(Long teamId, Long userId, CustomUserDetails userDetails) {
+        Team team = getTeamOrThrow(teamId);
+        checkTeamLeader(team, userDetails.getUser());
 
-        // 팀장이 아닌 경우 예외 처리
-        if (!team.getLeader().getId().equals(customUserDetails.getUser().getId())) {
-            throw new CustomException(ErrorCode.FORBIDDEN, "팀장만 지원서를 조회할 수 있습니다.");
-        }
+        User user = getUserOrThrow(userId);
 
-        // 지원자 유저 찾기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        // 지원서 조회
         Application application = applicationRepository.findByUserAndTeam(user, team)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "지원서를 찾을 수 없습니다."));
 
-        return new ApplicationResponseDto(application);
+        return ApplicationResponseDto.from(application);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ApplicationResponseDto> getApplicationsByTeamId(Long teamId, CustomUserDetails userDetails) {
+        Team team = getTeamOrThrow(teamId);
+        checkTeamLeader(team, userDetails.getUser());
+
+        return applicationRepository.findAllByTeam(team).stream()
+                .map(ApplicationResponseDto::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ApplicationStatusUpdateRequest updateApplication(Long teamId, Long userId,
+                                                            ApplicationStatusUpdateRequest request,
+                                                            CustomUserDetails userDetails) {
+        Team team = getTeamOrThrow(teamId);
+        checkTeamLeader(team, userDetails.getUser());
+
+        User user = getUserOrThrow(userId);
+
+        Application application = applicationRepository.findByUserAndTeam(user, team)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "지원서를 찾을 수 없습니다."));
+
+        application.changeStatus(request.getStatus());
+        return request;
+    }
+
+    // =========================== ⬇️ 헬퍼 메서드 정리 ⬇️ ===========================
+
+    private Team getTeamOrThrow(Long teamId) {
+        return teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "팀을 찾을 수 없습니다."));
+    }
+
+    private User getUserOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private void checkTeamLeader(Team team, User user) {
+        if (!team.getLeader().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.FORBIDDEN, "팀장만 지원서에 접근할 수 있습니다.");
+        }
+    }
+
+    private String uploadFileIfPresent(MultipartFile file) {
+        if (file != null && !file.isEmpty()) {
+            return s3Service.uploadFile(file);
+        }
+        return null;
     }
 }
