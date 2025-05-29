@@ -8,8 +8,6 @@ services:
       - db
     networks:
       - app-network
-    env_file:
-      - .env
 
   db:
     image: mysql:8.0
@@ -19,8 +17,11 @@ services:
       timeout: 5s
       retries: 5
     container_name: goormthon-db
-    env_file:
-      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345
+      - MYSQL_DATABASE=sample
+      - MYSQL_USER=userab
+      - MYSQL_PASSWORD=12345
     ports:
       - "3306:3306"
     volumes:
