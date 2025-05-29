@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "팀 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/teams")
+@RequestMapping("api/teams")
 public class TeamController {
 
   private final TeamService teamService;
@@ -24,8 +24,9 @@ public class TeamController {
   @ApiResponses({
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "팀 생성 성공"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 실패"),
-      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "사용자 없음")
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "팀 생성 실패")
   })
+  @PostMapping("/create")
   public ApiResponse<TeamCreateResponse> createTeam(
       @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody TeamCreateRequest request) {
