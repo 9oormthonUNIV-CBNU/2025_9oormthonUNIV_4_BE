@@ -1,5 +1,6 @@
 package goormthon_group4.backend.global.common.exception.response;
 
+import goormthon_group4.backend.global.common.exception.BaseErrorCode;
 import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import goormthon_group4.backend.global.common.exception.code.SuccessCode;
 import lombok.Builder;
@@ -34,7 +35,7 @@ public class ApiResponse<T> {
   }
 
   // ✅ 실패 응답 (ErrorCode 기반)
-  public static <T> ApiResponse<T> error(ErrorCode errorCode, String customMessage) {
+  public static <T> ApiResponse<T> error(BaseErrorCode errorCode, String customMessage) {
     return ApiResponse.<T>builder()
         .success(false)
         .status(errorCode.getHttpStatus().value())
@@ -44,7 +45,7 @@ public class ApiResponse<T> {
         .build();
   }
 
-  public static <T> ApiResponse<T> error(ErrorCode errorCode) {
+  public static <T> ApiResponse<T> error(BaseErrorCode errorCode) {
     return error(errorCode, null);
   }
 }
