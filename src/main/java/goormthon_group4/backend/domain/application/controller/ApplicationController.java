@@ -8,14 +8,12 @@ import goormthon_group4.backend.global.common.exception.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "팀 지원 API", description = "팀에 대한 지원서 제출하는 기능")
+@Tag(name = "팀 지원 API", description = "지원서 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/applications")
@@ -31,4 +29,14 @@ public class ApplicationController {
     ) {
         ApplicationResponseDto responseDto = applicationService.submitApplication(applicationRequestDto, customUserDetails, multipartFile);
         return ApiResponse.success(responseDto);
-    }}
+    }
+
+    @Operation(summary = "팀장의 특정 지원서 조회", description = "팀장만 접근 가능")
+    @GetMapping("/{teamId}/{userId}")
+    public ApiResponse<ApplicationResponseDto> getApplication(
+            @PathVariable Long teamId,
+            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomUserDetails cutomUserDetails) {
+        return ApiResponse.success(applicationService.getApplication(teamId, userId, cutomUserDetails));
+    }
+}
