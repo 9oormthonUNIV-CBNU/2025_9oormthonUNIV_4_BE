@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
     // 특정 유저가 특정 팀에 이미 지원했는지 확인
-    boolean existsByUserId(User user, Team team);
+    boolean existsByUserAndTeam(User user, Team team);
 
     // 특정 팀에 속한 지원서 모두 조회
     List<Application> findAllByTeam(Team team);
@@ -19,5 +19,5 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     List<Application> findAllByUser(User user);
 
     // 유저와 팀 기준으로 지원서 단건 조회
-    Optional<Application> findByUserAndTeam(Team team, User user);
+    Optional<Application> findByUserAndTeam(User user, Team team);
 }
