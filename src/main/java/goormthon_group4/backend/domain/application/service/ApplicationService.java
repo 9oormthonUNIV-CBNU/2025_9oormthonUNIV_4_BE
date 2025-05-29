@@ -62,4 +62,25 @@ public class ApplicationService {
         applicationRepository.save(application);
         return new ApplicationResponseDto(application);
     }
+
+    @Transactional(readOnly = true)
+    public ApplicationResponseDto getApplication(Long teamId, Long userId, CustomUserDetails customUserDetails) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "팀을 찾을 수 없습니다."));
+
+        // 팀장이 아닌 경우 예외 처리
+        if (!team.getLeader().getId().equals(customUserDetails.getUser().getId())) {
+            throw new CustomException(ErrorCode.FORBIDDEN, "팀장만 지원서를 조회할 수 있습니다.");
+        }
+
+        // 지원자 유저 찾기
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 지원서 조회
+        Application application = applicationRepository.findByUserAndTeam(user, team)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "지원서를 찾을 수 없습니다."));
+
+        return new ApplicationResponseDto(application);
+    }
 }
