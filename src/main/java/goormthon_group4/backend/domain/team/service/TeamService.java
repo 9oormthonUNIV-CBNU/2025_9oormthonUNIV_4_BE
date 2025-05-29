@@ -34,23 +34,27 @@ public class TeamService {
   }
 
   @Transactional
-  public TeamCreateResponse create(Long leaderId ,TeamCreateRequest requestDto) {
+  public TeamCreateResponse create(Long leaderId, TeamCreateRequest requestDto) {
     User user = getUserById(leaderId);
     Project project = getProjectById(requestDto.getProjectId());
 
-    // Post 엔티티 생성
+    // Team 엔티티 생성 (fileUrl 제외)
     Team team = Team.builder()
         .leader(user)
         .project(project)
         .status(TeamStatus.RECRUITING)
         .maxUserCount(requestDto.getMaxUserCount())
-        .startAt(
-        requestDto.getStartAt())
+        .startAt(requestDto.getStartAt())
         .endAt(requestDto.getEndAt())
         .title(requestDto.getTitle())
         .content(requestDto.getContent())
-        .fileUrl(requestDto.getFileUrl())
         .build();
+
+    // fileUrl이 null이 아니면 설정
+    if (requestDto.getFileUrl() != null) {
+      team.setFileUrl(requestDto.getFileUrl());
+    }
+
     // 양방향 연관관계 설정
     user.addTeam(team);
     project.addTeam(team);
@@ -58,22 +62,19 @@ public class TeamService {
     userRepository.save(user);
     teamRepository.save(team);
 
-
-    return TeamCreateResponse.builder().id(
-        team.getId()
-    ).status(
-        team.getStatus()
-    ).title(team.getTitle())
+    TeamCreateResponse.TeamCreateResponseBuilder builder = TeamCreateResponse.builder()
+        .id(team.getId())
+        .status(team.getStatus())
+        .title(team.getTitle())
         .content(team.getContent())
-        .fileUrl(team.getFileUrl())
         .startAt(team.getStartAt())
         .endAt(team.getEndAt())
-        .maxUserCount(team.getMaxUserCount())
-            .build();
+        .maxUserCount(team.getMaxUserCount());
 
+    if (team.getFileUrl() != null) {
+      builder.fileUrl(team.getFileUrl());
+    }
 
-
-
-
+    return builder.build();
   }
 }
