@@ -66,8 +66,8 @@ jobs:
         script: |
           echo ${{ secrets.DOCKERHUB_PASSWORD }} | sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
           sudo docker pull minwu1234/9roomthon-4-team:latest
-          docker-compose -f docker-compose.yml down
-          docker-compose -f docker-compose.yml up -d --build
+          docker-compose -f docker-compose.yml down -v
+#          docker-compose -f docker-compose.yml up -d --build
 
 
 
