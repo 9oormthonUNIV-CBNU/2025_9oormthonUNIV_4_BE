@@ -24,15 +24,22 @@ public class ApplicationResponseDto {
     private String fileUrl;
     private ApplicationStatus status;
 
-    @Builder
-    public ApplicationResponseDto(Application application) {
-        this.id = application.getId();
-        this.name = application.getName();
-        this.email = application.getEmail();
-        this.phoneNumber = application.getPhoneNumber();
-        this.introduce = application.getIntroduce();
-        this.purpose = application.getPurpose();
-        this.skillExperience = application.getSkillExperience();
-        this.strengthsExperience = application.getStrengthsExperience();
+    private Long userId;
+    private Long teamId;
+
+    public static ApplicationResponseDto from(Application application) {
+        return ApplicationResponseDto.builder()
+                .id(application.getId())
+                .name(application.getName())
+                .email(application.getEmail())
+                .phoneNumber(application.getPhoneNumber())
+                .introduce(application.getIntroduce())
+                .purpose(application.getPurpose())
+                .skillExperience(application.getSkillExperience())
+                .strengthsExperience(application.getStrengthsExperience())
+                .fileUrl(application.getFileUrl())
+                .userId(application.getUser().getId())
+                .teamId(application.getTeam().getId())
+                .build();
     }
 }
