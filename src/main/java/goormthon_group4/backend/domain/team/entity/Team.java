@@ -1,7 +1,7 @@
 package goormthon_group4.backend.domain.team.entity;
 
 import goormthon_group4.backend.domain.application.entity.Application;
-import goormthon_group4.backend.domain.member.Member;
+import goormthon_group4.backend.domain.member.entity.Member;
 import goormthon_group4.backend.domain.project.entity.Project;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.global.common.base.BaseEntity;
