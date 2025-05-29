@@ -34,6 +34,11 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Team> leadingTeams = new ArrayList<>();
 
+    public void addTeam(Team team) {
+        leadingTeams.add(team);
+        team.setLeader(this);
+    }
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Application> applications = new ArrayList<>();
 
@@ -60,6 +65,8 @@ public class User extends BaseEntity {
         this.role = role;
         this.userInfo = userInfo;
     }
+
+
 
 }
 

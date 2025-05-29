@@ -1,12 +1,13 @@
 package goormthon_group4.backend.global.common.exception.code;
 
+import goormthon_group4.backend.global.common.exception.BaseErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode {
+public enum ErrorCode implements BaseErrorCode {
 
   // 400 BAD REQUEST
   INVALID_REQUEST(HttpStatus.BAD_REQUEST, "400_001", "잘못된 요청입니다."),
