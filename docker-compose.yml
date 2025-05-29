@@ -12,7 +12,7 @@ services:
   db:
     image: mysql:8.0
     healthcheck:
-      test: [ "CMD-SHELL", "mysqladmin ping -h goormthon-db -uroot -p1234" ]
+      test: [ "CMD-SHELL", "mysqladmin ping -h goormthon-db -uroot -p12345" ]
       interval: 10s
       timeout: 5s
       retries: 5
