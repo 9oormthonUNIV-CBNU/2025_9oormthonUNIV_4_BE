@@ -62,15 +62,19 @@ public class TeamService {
     userRepository.save(user);
     teamRepository.save(team);
 
-    return TeamCreateResponse.builder()
+    TeamCreateResponse.TeamCreateResponseBuilder builder = TeamCreateResponse.builder()
         .id(team.getId())
         .status(team.getStatus())
         .title(team.getTitle())
         .content(team.getContent())
-        .fileUrl(team.getFileUrl())
         .startAt(team.getStartAt())
         .endAt(team.getEndAt())
-        .maxUserCount(team.getMaxUserCount())
-        .build();
+        .maxUserCount(team.getMaxUserCount());
+
+    if (team.getFileUrl() != null) {
+      builder.fileUrl(team.getFileUrl());
+    }
+
+    return builder.build();
   }
 }
