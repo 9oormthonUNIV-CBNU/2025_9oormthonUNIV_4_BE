@@ -15,17 +15,17 @@ public class ProjectResponseDto {
 
     private Long id;
     private String companyName;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private String title;
     private String description;
     private String content;
     private ProjectStatus status;
+    private String statusLabel;
     private LocalDate startAt;
     private LocalDate endAt;
     private String email;
     private String fileUrl;
     private String imageUrl;
     private List<CategoryResponseDto> categories;
-
+    private String dDay;
+    private List<RelatedProjectDto> relatedProjects;
 }
