@@ -74,7 +74,6 @@ public class TeamService {
     user.addTeam(team);
     project.addTeam(team);
 
-    userRepository.save(user);
     teamRepository.save(team);
 
     return new TeamCreateResponse(team);

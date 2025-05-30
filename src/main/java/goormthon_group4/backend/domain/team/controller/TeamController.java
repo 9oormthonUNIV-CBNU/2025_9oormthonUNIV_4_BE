@@ -45,7 +45,7 @@ public class TeamController {
       @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody TeamUpdateRequest request
   ){
-    TeamUpdateResponse responseDto = teamService.update(userDetails.getUser().getId(), id, request);
+    TeamUpdateResponse responseDto = teamService.update(id,userDetails.getUser().getId(),request);
     return ApiResponse.success(responseDto);
   }
 
