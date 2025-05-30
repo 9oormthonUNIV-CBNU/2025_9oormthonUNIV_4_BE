@@ -1,7 +1,7 @@
 package goormthon_group4.backend.domain.user.entity;
 
 import goormthon_group4.backend.domain.application.entity.Application;
-import goormthon_group4.backend.domain.member.Member;
+import goormthon_group4.backend.domain.member.entity.Member;
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
@@ -34,6 +34,11 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "leader", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Team> leadingTeams = new ArrayList<>();
 
+    public void addTeam(Team team) {
+        leadingTeams.add(team);
+        team.setLeader(this);
+    }
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Application> applications = new ArrayList<>();
 
@@ -60,6 +65,8 @@ public class User extends BaseEntity {
         this.role = role;
         this.userInfo = userInfo;
     }
+
+
 
 }
 

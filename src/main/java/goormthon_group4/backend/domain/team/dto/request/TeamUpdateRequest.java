@@ -1,6 +1,5 @@
 package goormthon_group4.backend.domain.team.dto.request;
 
-import goormthon_group4.backend.domain.team.entity.TeamStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -11,8 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TeamCreateRequest {
-
+public class TeamUpdateRequest {
   @NotNull
   private Integer maxUserCount;
 
@@ -29,9 +27,5 @@ public class TeamCreateRequest {
   private String content;
 
   private String fileUrl;  // 선택적
-
-  @NotNull
-  private Long projectId;
-
 
 }

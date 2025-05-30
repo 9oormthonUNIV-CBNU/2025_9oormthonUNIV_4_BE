@@ -36,6 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
+src/main/java/goormthon_group4/backend/.env
 .env
 127.0.0.1:0:
 
@@ -46,6 +47,7 @@ docker-compose.override.yml
 src/main/resources/.env
 
 # application.yml
+src/main/resources/application.yml
 application.yml
 
 # macOS system files
