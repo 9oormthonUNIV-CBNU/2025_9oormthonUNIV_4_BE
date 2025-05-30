@@ -3,6 +3,7 @@ package goormthon_group4.backend.domain.team.controller;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamUpdateResponse;
 import goormthon_group4.backend.domain.team.service.TeamService;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
@@ -10,6 +11,7 @@ import goormthon_group4.backend.global.common.exception.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +58,13 @@ public class TeamController {
   ){
     teamService.delete(userDetails.getUser().getId(), id);
     return ApiResponse.success(null);
+  }
+
+  @Operation(summary = "팀들을 조회하기", description = "프로젝트에 딸린 모든 팀을 가져옵니다.")
+  @GetMapping("/projects/{projectId}/teams")
+  public ApiResponse<List<TeamResponse>> getTeamsByProject(@PathVariable Long projectId) {
+    List<TeamResponse> teams = teamService.getTeamsByProjectId(projectId);
+    return ApiResponse.success(teams);
   }
 
 
