@@ -7,6 +7,5 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CategoryRequestDto {
-    private Long id;
     private String title;
 }
