@@ -126,7 +126,7 @@ public class TeamService {
   }
 
   public List<MyTeamResponse> getTeamsByUserId(Long userId) {
-    List<Team> teams = teamRepository.findByLeaderId(userId);
+    List<Team> teams = teamRepository.findAllTeamsInvolvingUser(userId);
 
     return teams.stream()
         .map(team -> MyTeamResponse.builder()
