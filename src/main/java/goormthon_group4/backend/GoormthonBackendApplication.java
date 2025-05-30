@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@SpringBootApplication
 @EnableJpaAuditing
+@SpringBootApplication
 public class GoormthonBackendApplication {
 
     public static void main(String[] args) {
