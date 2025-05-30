@@ -27,6 +27,7 @@ public enum ErrorCode implements BaseErrorCode {
   // 404 NOT FOUND
   RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "404_001", "요청한 리소스를 찾을 수 없습니다."),
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "404_002", "사용자를 찾을 수 없습니다."),
+  NOTIFY_NOT_FOUND(HttpStatus.NOT_FOUND, "404_003", "공지사항을 찾을 수 없습니다."),
 
   // 409 CONFLICT
   DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "409_001", "이미 존재하는 리소스입니다."),

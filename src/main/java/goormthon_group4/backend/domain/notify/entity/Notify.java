@@ -1,5 +1,6 @@
-package goormthon_group4.backend.domain.team.entity;
+package goormthon_group4.backend.domain.notify.entity;
 
+import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
