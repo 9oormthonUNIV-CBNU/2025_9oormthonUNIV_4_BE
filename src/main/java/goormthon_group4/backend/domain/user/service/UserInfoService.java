@@ -1,18 +1,15 @@
 package goormthon_group4.backend.domain.user.service;
 
-import goormthon_group4.backend.domain.user.dto.UserInfoRequestDto;
-import goormthon_group4.backend.domain.user.dto.UserInfoResponseDto;
+import goormthon_group4.backend.domain.user.dto.request.UserInfoRequestDto;
+import goormthon_group4.backend.domain.user.dto.response.UserInfoResponseDto;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.domain.user.entity.UserInfo;
 import goormthon_group4.backend.domain.user.repository.UserInfoRepository;
 import goormthon_group4.backend.domain.user.repository.UserRepository;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.springframework.boot.origin.Origin.from;
 
 @Service
 @Transactional

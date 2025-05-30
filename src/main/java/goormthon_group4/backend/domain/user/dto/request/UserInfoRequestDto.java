@@ -1,4 +1,4 @@
-package goormthon_group4.backend.domain.user.dto;
+package goormthon_group4.backend.domain.user.dto.request;
 
 import lombok.*;
 
