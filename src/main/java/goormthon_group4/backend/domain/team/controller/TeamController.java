@@ -1,7 +1,9 @@
 package goormthon_group4.backend.domain.team.controller;
 
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
+import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamUpdateResponse;
 import goormthon_group4.backend.domain.team.service.TeamService;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
 import goormthon_group4.backend.global.common.exception.response.ApiResponse;
@@ -24,13 +26,41 @@ public class TeamController {
   @ApiResponses({
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "팀 생성 성공"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 실패"),
-      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "팀 생성 실패")
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "팀 생성 실패")
   })
   @PostMapping("/create")
-  public ApiResponse<TeamCreateResponse> createTeam(
+  public ApiResponse<TeamCreateResponse> create(
       @AuthenticationPrincipal CustomUserDetails userDetails,
       @RequestBody TeamCreateRequest request) {
     TeamCreateResponse responseDto = teamService.create(userDetails.getUser().getId(), request);
     return ApiResponse.success(responseDto);
   }
+
+  @Operation(summary = "팀 업데이트 하기", description = "팀을 업데이트 합니다.")
+  @PutMapping("/{id}")
+  public ApiResponse<TeamUpdateResponse> update(
+      @PathVariable Long id,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @RequestBody TeamUpdateRequest request
+  ){
+    TeamUpdateResponse responseDto = teamService.update(userDetails.getUser().getId(), id, request);
+    return ApiResponse.success(responseDto);
+  }
+
+
+  @Operation(summary = "팀 삭제하기", description = "팀을 삭제 합니다.")
+  @DeleteMapping("/{id}")
+  public ApiResponse<Void> delete(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable Long id
+  ){
+    teamService.delete(userDetails.getUser().getId(), id);
+    return ApiResponse.success(null);
+  }
+
+
+
+
+
+
 }
