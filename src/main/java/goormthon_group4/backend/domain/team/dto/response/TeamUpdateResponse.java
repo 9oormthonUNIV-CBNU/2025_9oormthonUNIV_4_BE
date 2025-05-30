@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class TeamCreateResponse {
+public class TeamUpdateResponse {
   private Long id;
   private TeamStatus status;
   private Integer maxUserCount;
@@ -21,7 +21,7 @@ public class TeamCreateResponse {
   private String fileUrl;
   private Long leaderId;
   @Builder
-  public TeamCreateResponse(Team team) {
+  public TeamUpdateResponse(Team team) {
     this.id = team.getId();
     this.status = team.getStatus();
     this.maxUserCount = team.getMaxUserCount();

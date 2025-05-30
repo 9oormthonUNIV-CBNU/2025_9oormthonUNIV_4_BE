@@ -3,7 +3,9 @@ package goormthon_group4.backend.domain.team.service;
 import goormthon_group4.backend.domain.project.entity.Project;
 import goormthon_group4.backend.domain.project.repository.ProjectRepository;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
+import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamUpdateResponse;
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.team.entity.TeamStatus;
 import goormthon_group4.backend.domain.team.exception.TeamErrorCode;
@@ -13,6 +15,7 @@ import goormthon_group4.backend.domain.user.repository.UserRepository;
 import goormthon_group4.backend.global.common.exception.CustomException;
 import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import jakarta.transaction.Transactional;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,11 @@ public class TeamService {
   private Project getProjectById(Long id) {
     return projectRepository.findById(id)
         .orElseThrow(() -> new CustomException(TeamErrorCode.PROJECT_NOT_FOUND));
+  }
+
+  private Team getTeamById(Long id) {
+    return teamRepository.findById(id)
+        .orElseThrow(() -> new CustomException(TeamErrorCode.TEAM_NOT_FOUND));
   }
 
   @Transactional
@@ -62,19 +70,35 @@ public class TeamService {
     userRepository.save(user);
     teamRepository.save(team);
 
-    TeamCreateResponse.TeamCreateResponseBuilder builder = TeamCreateResponse.builder()
-        .id(team.getId())
-        .status(team.getStatus())
-        .title(team.getTitle())
-        .content(team.getContent())
-        .startAt(team.getStartAt())
-        .endAt(team.getEndAt())
-        .maxUserCount(team.getMaxUserCount());
+    return new TeamCreateResponse(team);
+  }
 
-    if (team.getFileUrl() != null) {
-      builder.fileUrl(team.getFileUrl());
+  @Transactional
+  public TeamUpdateResponse update(Long id, Long userId, TeamUpdateRequest request) {
+    Team team = getTeamById(id);
+
+    if (!Objects.equals(team.getLeader().getId(), userId)) {
+      throw new CustomException(TeamErrorCode.DONT_HAVE_GRANTED);
     }
 
-    return builder.build();
+    // 요청 값을 기반으로 팀 정보 업데이트
+    team.setTitle(request.getTitle());
+    team.setContent(request.getContent());
+    team.setMaxUserCount(request.getMaxUserCount());
+    team.setStartAt(request.getStartAt());
+    team.setEndAt(request.getEndAt());
+    team.setFileUrl(request.getFileUrl());
+
+    // 응답 객체로 변환하여 반환
+    return new TeamUpdateResponse(team);
+  }
+
+
+  public void delete(Long userId,Long id) {
+    Team team = getTeamById(id);
+    if(!Objects.equals(team.getLeader().getId(), userId)) {
+      throw new CustomException(TeamErrorCode.DONT_HAVE_GRANTED);
+    }
+    teamRepository.delete(team);
   }
 }
