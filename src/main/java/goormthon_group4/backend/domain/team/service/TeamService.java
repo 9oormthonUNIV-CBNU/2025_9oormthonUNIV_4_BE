@@ -5,6 +5,7 @@ import goormthon_group4.backend.domain.project.repository.ProjectRepository;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamUpdateResponse;
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.team.entity.TeamStatus;
@@ -15,11 +16,14 @@ import goormthon_group4.backend.domain.user.repository.UserRepository;
 import goormthon_group4.backend.global.common.exception.CustomException;
 import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TeamService {
   private final TeamRepository teamRepository;
@@ -43,7 +47,10 @@ public class TeamService {
 
   @Transactional
   public TeamCreateResponse create(Long leaderId, TeamCreateRequest requestDto) {
+    log.info("Create team request: {}", requestDto);
     User user = getUserById(leaderId);
+    log.info("Create team response: {}", user);
+
     Project project = getProjectById(requestDto.getProjectId());
 
     // Team 엔티티 생성 (fileUrl 제외)
@@ -100,5 +107,14 @@ public class TeamService {
       throw new CustomException(TeamErrorCode.DONT_HAVE_GRANTED);
     }
     teamRepository.delete(team);
+  }
+
+  public List<TeamResponse> getTeamsByProjectId(Long projectId) {
+    // 프로젝트 존재 여부 먼저 확인
+    boolean exists = projectRepository.existsById(projectId);
+    if (!exists) {
+      throw new CustomException(TeamErrorCode.PROJECT_NOT_FOUND);
+    }
+    return teamRepository.findTeamResponsesByProjectId(projectId);
   }
 }
