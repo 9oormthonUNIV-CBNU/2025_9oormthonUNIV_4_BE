@@ -85,4 +85,12 @@ public class Team extends BaseEntity {
     //toolLink.setTeam(this);
   }
 
+  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Output> outputs = new ArrayList<>();
+
+  public void addOutput(Output output) {
+    outputs.add(output);
+    // output.setTeam(this);
+  }
+
 }
