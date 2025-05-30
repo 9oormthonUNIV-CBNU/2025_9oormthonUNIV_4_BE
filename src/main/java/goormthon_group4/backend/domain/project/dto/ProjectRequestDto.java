@@ -17,7 +17,6 @@ public class ProjectRequestDto {
     private String title;
     private String description;
     private String content;
-    private ProjectStatus status;
     private LocalDate startAt;
     private LocalDate endAt;
     private String email;

@@ -56,4 +56,9 @@ public class Project extends BaseEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Team> teams = new ArrayList<>();
+
+    public void addTeam(Team team) {
+        teams.add(team);
+        team.setProject(this);
+    }
 }
