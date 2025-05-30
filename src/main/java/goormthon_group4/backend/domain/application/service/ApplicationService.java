@@ -6,6 +6,7 @@ import goormthon_group4.backend.domain.application.dto.response.ApplicationRespo
 import goormthon_group4.backend.domain.application.entity.Application;
 import goormthon_group4.backend.domain.application.entity.ApplicationStatus;
 import goormthon_group4.backend.domain.application.repository.ApplicationRepository;
+import goormthon_group4.backend.domain.member.entity.Member;
 import goormthon_group4.backend.domain.s3.service.S3Service;
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.team.repository.TeamRepository;
@@ -96,6 +97,23 @@ public class ApplicationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "지원서를 찾을 수 없습니다."));
 
         application.changeStatus(request.getStatus());
+
+        if (request.getStatus() == ApplicationStatus.ACCEPT) {
+            // 이미 등록된 멤버인지 확인
+            boolean alreadyMember = team.getMembers().stream()
+                    .anyMatch(member -> member.getUser().getId().equals(user.getId()));
+
+            if (!alreadyMember) {
+                Member member = Member.builder()
+                        .user(user)
+                        .team(team)
+                        .build();
+
+                // 양방향 관계 모두 추가
+                user.getMembers().add(member);
+                team.getMembers().add(member);
+            }
+        }
         return request;
     }
 
