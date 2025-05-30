@@ -5,6 +5,9 @@ import goormthon_group4.backend.domain.project.repository.ProjectRepository;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamDetailProjectResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamDetailResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamUpdateResponse;
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.team.entity.TeamStatus;
@@ -15,11 +18,14 @@ import goormthon_group4.backend.domain.user.repository.UserRepository;
 import goormthon_group4.backend.global.common.exception.CustomException;
 import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TeamService {
   private final TeamRepository teamRepository;
@@ -67,7 +73,6 @@ public class TeamService {
     user.addTeam(team);
     project.addTeam(team);
 
-    userRepository.save(user);
     teamRepository.save(team);
 
     return new TeamCreateResponse(team);
@@ -93,7 +98,7 @@ public class TeamService {
     return new TeamUpdateResponse(team);
   }
 
-
+  @Transactional
   public void delete(Long userId,Long id) {
     Team team = getTeamById(id);
     if(!Objects.equals(team.getLeader().getId(), userId)) {
@@ -101,4 +106,21 @@ public class TeamService {
     }
     teamRepository.delete(team);
   }
+  @Transactional
+  public List<TeamResponse> getTeamsByProjectId(Long projectId) {
+    // 프로젝트 존재 여부 먼저 확인
+    boolean exists = projectRepository.existsById(projectId);
+    if (!exists) {
+      throw new CustomException(TeamErrorCode.PROJECT_NOT_FOUND);
+    }
+    return teamRepository.findTeamResponsesByProjectId(projectId);
+  }
+
+  @Transactional()
+  public TeamDetailResponse getTeamDetail(Long teamId) {
+    Team team = getTeamById(teamId);
+    TeamDetailProjectResponse projectResponse = TeamDetailProjectResponse.from(team.getProject());
+    return TeamDetailResponse.from(team, projectResponse, team.getMembers().size());
+  }
+
 }
