@@ -5,6 +5,8 @@ import goormthon_group4.backend.domain.project.repository.ProjectRepository;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamDetailProjectResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamDetailResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamUpdateResponse;
 import goormthon_group4.backend.domain.team.entity.Team;
@@ -47,10 +49,7 @@ public class TeamService {
 
   @Transactional
   public TeamCreateResponse create(Long leaderId, TeamCreateRequest requestDto) {
-    log.info("Create team request: {}", requestDto);
     User user = getUserById(leaderId);
-    log.info("Create team response: {}", user);
-
     Project project = getProjectById(requestDto.getProjectId());
 
     // Team 엔티티 생성 (fileUrl 제외)
@@ -99,7 +98,7 @@ public class TeamService {
     return new TeamUpdateResponse(team);
   }
 
-
+  @Transactional
   public void delete(Long userId,Long id) {
     Team team = getTeamById(id);
     if(!Objects.equals(team.getLeader().getId(), userId)) {
@@ -107,7 +106,7 @@ public class TeamService {
     }
     teamRepository.delete(team);
   }
-
+  @Transactional
   public List<TeamResponse> getTeamsByProjectId(Long projectId) {
     // 프로젝트 존재 여부 먼저 확인
     boolean exists = projectRepository.existsById(projectId);
@@ -116,4 +115,12 @@ public class TeamService {
     }
     return teamRepository.findTeamResponsesByProjectId(projectId);
   }
+
+  @Transactional()
+  public TeamDetailResponse getTeamDetail(Long teamId) {
+    Team team = getTeamById(teamId);
+    TeamDetailProjectResponse projectResponse = TeamDetailProjectResponse.from(team.getProject());
+    return TeamDetailResponse.from(team, projectResponse, team.getMembers().size());
+  }
+
 }
