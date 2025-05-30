@@ -67,4 +67,8 @@ public class Application extends BaseEntity {
   @Column(nullable = true)
   private String additionalInfo; // nullable
 
+  // 지원서 상태 변경
+  public void changeStatus(ApplicationStatus status) {
+    this.status = status;
+  }
 }

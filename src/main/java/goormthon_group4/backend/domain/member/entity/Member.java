@@ -1,4 +1,4 @@
-package goormthon_group4.backend.domain.member;
+package goormthon_group4.backend.domain.member.entity;
 
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.user.entity.User;
