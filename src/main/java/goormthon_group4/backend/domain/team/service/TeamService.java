@@ -4,6 +4,7 @@ import goormthon_group4.backend.domain.project.entity.Project;
 import goormthon_group4.backend.domain.project.repository.ProjectRepository;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
+import goormthon_group4.backend.domain.team.dto.response.MyTeamResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamDetailProjectResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamDetailResponse;
@@ -20,6 +21,7 @@ import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -122,5 +124,23 @@ public class TeamService {
     TeamDetailProjectResponse projectResponse = TeamDetailProjectResponse.from(team.getProject());
     return TeamDetailResponse.from(team, projectResponse, team.getMembers().size());
   }
+
+  public List<MyTeamResponse> getTeamsByUserId(Long userId) {
+    List<Team> teams = teamRepository.findByLeaderId(userId);
+
+    return teams.stream()
+        .map(team -> MyTeamResponse.builder()
+            .id(team.getId())
+            .status(team.getStatus())
+            .maxUserCount(team.getMaxUserCount())
+            .startAt(team.getStartAt())
+            .endAt(team.getEndAt())
+            .title(team.getTitle())
+            .content(team.getContent())
+            .projectTitle(team.getProject() != null ? team.getProject().getTitle() : null)
+            .build())
+        .collect(Collectors.toList());
+  }
+
 
 }

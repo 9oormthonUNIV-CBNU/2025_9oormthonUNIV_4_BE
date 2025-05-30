@@ -24,4 +24,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     WHERE t.project.id = :projectId
 """)
   List<TeamResponse> findTeamResponsesByProjectId(@Param("projectId") Long projectId);
+
+  List<Team> findByLeaderId(Long leaderId);
+
 }
