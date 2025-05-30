@@ -3,6 +3,7 @@ package goormthon_group4.backend.domain.team.controller;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
+import goormthon_group4.backend.domain.team.dto.response.TeamDetailResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamUpdateResponse;
 import goormthon_group4.backend.domain.team.service.TeamService;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "팀 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/teams")
+@RequestMapping("api/v1/teams")
 public class TeamController {
 
   private final TeamService teamService;
@@ -61,10 +63,16 @@ public class TeamController {
   }
 
   @Operation(summary = "팀들을 조회하기", description = "프로젝트에 딸린 모든 팀을 가져옵니다.")
-  @GetMapping("/projects/{projectId}/teams")
-  public ApiResponse<List<TeamResponse>> getTeamsByProject(@PathVariable Long projectId) {
+  @GetMapping("/projects/{projectId}")
+  public ApiResponse<List<TeamResponse>> getTeamsByProjectId(@PathVariable Long projectId) {
     List<TeamResponse> teams = teamService.getTeamsByProjectId(projectId);
     return ApiResponse.success(teams);
+  }
+
+  @Operation(summary = "팀 상세 조회하기", description = "팀 상세 정보를 가져옵니다.")
+  @GetMapping("/{id}")
+  public ApiResponse<TeamDetailResponse> getTeamById(@PathVariable Long id) {
+    return ApiResponse.success(teamService.getTeamDetail(id));
   }
 
 
