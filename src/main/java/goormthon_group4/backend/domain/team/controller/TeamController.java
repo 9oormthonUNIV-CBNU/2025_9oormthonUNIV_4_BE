@@ -2,6 +2,7 @@ package goormthon_group4.backend.domain.team.controller;
 
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
+import goormthon_group4.backend.domain.team.dto.response.MyTeamResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamDetailResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamResponse;
@@ -73,6 +74,16 @@ public class TeamController {
   @GetMapping("/{id}")
   public ApiResponse<TeamDetailResponse> getTeamById(@PathVariable Long id) {
     return ApiResponse.success(teamService.getTeamDetail(id));
+  }
+
+  @Operation(summary = "내 팀 가져오기", description = "내 팀을 가져옵니다.")
+  @GetMapping("/my")
+  public ApiResponse<List<MyTeamResponse>> getMyTeams(
+      @AuthenticationPrincipal CustomUserDetails userDetails
+  ) {
+    return ApiResponse.success(teamService.getTeamsByUserId(userDetails.getUser().getId()));
+
+
   }
 
 
