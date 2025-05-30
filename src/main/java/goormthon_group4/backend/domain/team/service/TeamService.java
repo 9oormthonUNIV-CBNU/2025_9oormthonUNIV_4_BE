@@ -1,5 +1,9 @@
 package goormthon_group4.backend.domain.team.service;
 
+import goormthon_group4.backend.domain.member.dto.MemberResponseDto;
+import goormthon_group4.backend.domain.notify.dto.NotifySummaryDto;
+import goormthon_group4.backend.domain.notify.repository.NotifyRepository;
+import goormthon_group4.backend.domain.notify.service.NotifyService;
 import goormthon_group4.backend.domain.project.entity.Project;
 import goormthon_group4.backend.domain.project.repository.ProjectRepository;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
@@ -15,16 +19,22 @@ import goormthon_group4.backend.domain.team.entity.TeamStatus;
 import goormthon_group4.backend.domain.team.exception.TeamErrorCode;
 import goormthon_group4.backend.domain.team.repository.TeamRepository;
 import goormthon_group4.backend.domain.user.entity.User;
+import goormthon_group4.backend.domain.user.entity.UserInfo;
 import goormthon_group4.backend.domain.user.repository.UserRepository;
 import goormthon_group4.backend.global.common.exception.CustomException;
 import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 @Slf4j
@@ -33,6 +43,7 @@ public class TeamService {
   private final TeamRepository teamRepository;
   private final UserRepository userRepository;
   private final ProjectRepository projectRepository;
+  private final NotifyService notifyService;
 
   private User getUserById(Long id) {
     return userRepository.findById(id)
@@ -122,8 +133,26 @@ public class TeamService {
   public TeamDetailResponse getTeamDetail(Long teamId) {
     Team team = getTeamById(teamId);
     TeamDetailProjectResponse projectResponse = TeamDetailProjectResponse.from(team.getProject());
-    return TeamDetailResponse.from(team, projectResponse, team.getMembers().size());
+    List<MemberResponseDto> members = team.getMembers().stream()
+            .map(member -> {
+              User user = member.getUser();
+              UserInfo info = user.getUserInfo();
+              return MemberResponseDto.builder()
+                      .userId(user.getId())
+                      .username(info.getNickname())
+                      .imgUrl(info.getImgUrl())
+                      .isLeader(team.getLeader().getId().equals(user.getId()))
+                      .joinedDaysAgo((int) DAYS.between(member.getCreatedAt().toLocalDate(), LocalDate.now()))
+                      .build();
+            }).toList();
+
+    // 공지사항 3개 페이징 조회
+    Page<NotifySummaryDto> notifyPage = notifyService.getNoticesByTeam(teamId, 0, 3);
+    List<NotifySummaryDto> notifies = notifyPage.getContent();
+
+    return TeamDetailResponse.from(team, projectResponse, members.size(), notifies);
   }
+
 
   public List<MyTeamResponse> getTeamsByUserId(Long userId) {
     List<Team> teams = teamRepository.findAllTeamsInvolvingUser(userId);
