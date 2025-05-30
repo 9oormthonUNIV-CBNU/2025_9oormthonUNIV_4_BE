@@ -18,7 +18,7 @@ public class S3Controller {
     this.s3Service = s3Service;
   }
 
-  @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
   public ApiResponse<String> uploadImage(@RequestPart MultipartFile file) {
       String url = s3Service.uploadFile(file);
       return ApiResponse.success(url);
