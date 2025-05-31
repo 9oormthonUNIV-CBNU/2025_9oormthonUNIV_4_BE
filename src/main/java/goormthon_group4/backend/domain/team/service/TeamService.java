@@ -146,7 +146,6 @@ public class TeamService {
     TeamDetailProjectResponse projectResponse = TeamDetailProjectResponse.from(team.getProject());
 
     List<MemberResponseDto> members = team.getMembers().stream()
-            .filter(member -> member.getKickedAt() == null)
             .map(member -> {
               User user = member.getUser();
               UserInfo info = user.getUserInfo();
