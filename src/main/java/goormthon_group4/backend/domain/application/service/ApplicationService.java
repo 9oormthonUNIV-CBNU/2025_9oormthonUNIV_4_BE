@@ -16,11 +16,8 @@ import goormthon_group4.backend.global.auth.CustomUserDetails;
 import goormthon_group4.backend.global.common.exception.CustomException;
 import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

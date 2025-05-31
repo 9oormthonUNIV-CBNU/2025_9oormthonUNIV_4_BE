@@ -9,7 +9,6 @@ import goormthon_group4.backend.global.common.exception.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +31,7 @@ public class ApplicationController {
             @ModelAttribute ApplicationRequestDto applicationRequestDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        MultipartFile file = applicationRequestDto.getFile();
+        MultipartFile file = applicationRequestDto.getFile(); // null일 수 있음
         ApplicationResponseDto applicationResponseDto = applicationService.submitApplication(teamId, applicationRequestDto, customUserDetails, file);
         return ApiResponse.success(applicationResponseDto);
     }
