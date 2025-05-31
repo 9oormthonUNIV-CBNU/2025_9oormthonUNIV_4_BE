@@ -23,5 +23,4 @@ public class ApplicationRequestDto {
     private String additionalInfo;
 
     private MultipartFile file; // 첨부파일
-
 }

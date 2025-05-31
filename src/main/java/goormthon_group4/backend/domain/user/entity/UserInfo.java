@@ -41,7 +41,6 @@ public class UserInfo extends BaseEntity {
         this.major = major;
         this.university = university;
         this.introduce = introduce;
-        this.imgUrl = imgUrl;
     }
 
     @PreUpdate
