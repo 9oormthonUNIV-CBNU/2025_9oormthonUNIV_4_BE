@@ -144,7 +144,9 @@ public class TeamService {
   public TeamDetailResponse getTeamDetail(Long teamId) {
     Team team = getTeamById(teamId);
     TeamDetailProjectResponse projectResponse = TeamDetailProjectResponse.from(team.getProject());
+
     List<MemberResponseDto> members = team.getMembers().stream()
+            .filter(member -> member.getKickedAt() == null)
             .map(member -> {
               User user = member.getUser();
               UserInfo info = user.getUserInfo();
@@ -154,8 +156,10 @@ public class TeamService {
                       .imgUrl(info.getImgUrl())
                       .isLeader(member.isLeader())
                       .joinedDaysAgo((int) DAYS.between(member.getCreatedAt().toLocalDate(), LocalDate.now()))
+                      .kickedAt(member.getKickedAt())
                       .build();
-            }).toList();
+            })
+            .toList();
 
     // 공지사항 3개 페이징 조회
     Page<NotifySummaryDto> notifyPage = notifyService.getNoticesByTeam(teamId, 0, 3);
