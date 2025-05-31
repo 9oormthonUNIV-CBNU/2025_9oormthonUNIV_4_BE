@@ -20,6 +20,7 @@
         private String leaderName;
         private LocalDate createdAt;
         private ApplicationStatus status;
+        private String statusLabel;
 
         public static MypageTeamDto from(Application application) {
             return MypageTeamDto.builder()
@@ -30,6 +31,14 @@
                     .createdAt(application.getCreatedAt().toLocalDate())
                     .status(application.getStatus())
                     .build();
+        }
+
+        private static String getStatusLabel(ApplicationStatus status) {
+            return switch (status) {
+                case PENDING -> "참여 신청중";
+                case ACCEPT -> "진행 중";
+                case REJECTED -> "참여 취소됨";
+            };
         }
 
     }

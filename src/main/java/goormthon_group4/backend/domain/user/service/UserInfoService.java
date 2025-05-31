@@ -4,7 +4,6 @@ import goormthon_group4.backend.domain.application.entity.Application;
 import goormthon_group4.backend.domain.application.repository.ApplicationRepository;
 import goormthon_group4.backend.domain.user.dto.request.UserInfoRequestDto;
 import goormthon_group4.backend.domain.user.dto.response.MypageFullResponseDto;
-import goormthon_group4.backend.domain.user.dto.response.MypageTeamDto;
 import goormthon_group4.backend.domain.user.dto.response.UserInfoResponseDto;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.domain.user.entity.UserInfo;
@@ -74,21 +73,18 @@ public class UserInfoService {
                 userInfoRequestDto.getImgUrl());
     }
 
-    @Transactional(readOnly = true)
-    public MypageFullResponseDto getMypage(CustomUserDetails customUserDetails) {
-        User user = customUserDetails.getUser();
+    @Transactional
+    public MypageFullResponseDto getMypage(User user) {
 
-        // Lazy 로딩 트리거
-        UserInfo userInfo = user.getUserInfo();
-        if (userInfo != null) {
-            userInfo.getNickname(); // 아무 필드나 호출하면 Lazy proxy가 초기화됨
-        }
+        // 세션 안에서 다시 영속화
+        User managedUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
 
         // 해당 유저가 작성한 모든 지원서 조회
-        List<Application> applications = applicationRepository.findAllByUser(user);
+        List<Application> applications = applicationRepository.findAllByUser(managedUser);
 
         // DTO로 변환 후 반환
-        return MypageFullResponseDto.form(user, applications);
+        return MypageFullResponseDto.from(user, applications);
     }
 }

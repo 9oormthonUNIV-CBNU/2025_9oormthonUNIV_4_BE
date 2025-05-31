@@ -17,6 +17,7 @@ public class MypageResponseDto {
     private String major;
     private String introduce;
     private boolean universityAuthenticated;
+    private String imgUrl;
 
     public static MypageResponseDto from(User user) {
         UserInfo userInfo = user.getUserInfo();
@@ -26,6 +27,7 @@ public class MypageResponseDto {
                 .major(userInfo.getMajor())
                 .introduce(userInfo.getIntroduce())
                 .universityAuthenticated(user.isUniversityAuthenticated())
+                .imgUrl(userInfo.getImgUrl())
                 .build();
     }
 }

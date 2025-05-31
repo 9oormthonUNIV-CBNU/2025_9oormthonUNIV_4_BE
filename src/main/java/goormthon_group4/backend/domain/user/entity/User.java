@@ -47,7 +47,7 @@ public class User extends BaseEntity {
 
     // 단방향 매핑 User가 FK 가지고 있음
     @Setter
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_info_id")
     private UserInfo userInfo;
 

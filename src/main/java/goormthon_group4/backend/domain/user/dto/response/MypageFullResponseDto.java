@@ -13,7 +13,7 @@ public class MypageFullResponseDto {
     private MypageResponseDto userInfo;
     private List<MypageTeamDto> applications;
 
-    public static MypageFullResponseDto form(User user, List<Application> applications) {
+    public static MypageFullResponseDto from(User user, List<Application> applications) {
         List<MypageTeamDto> teamDtos = applications.stream()
                 .map(MypageTeamDto::from)
                 .toList();
