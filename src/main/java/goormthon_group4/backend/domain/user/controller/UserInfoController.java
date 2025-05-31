@@ -1,7 +1,8 @@
 package goormthon_group4.backend.domain.user.controller;
 
-import goormthon_group4.backend.domain.user.dto.UserInfoRequestDto;
-import goormthon_group4.backend.domain.user.dto.UserInfoResponseDto;
+import goormthon_group4.backend.domain.user.dto.request.UserInfoRequestDto;
+import goormthon_group4.backend.domain.user.dto.response.MypageFullResponseDto;
+import goormthon_group4.backend.domain.user.dto.response.UserInfoResponseDto;
 import goormthon_group4.backend.domain.user.service.UserInfoService;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -34,4 +35,8 @@ public class UserInfoController {
         userInfoService.updateUserInfo(userInfoRequestDto, customUserDetails);
         return ResponseEntity.ok("UserInfo 수정 완료;");
     }
-}
+
+    @GetMapping("/mypage")
+    public ApiResponse<MypageFullResponseDto> getMypage(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ApiResponse.success(userInfoService.getMypage(userDetails.getUser()));
+    }}
