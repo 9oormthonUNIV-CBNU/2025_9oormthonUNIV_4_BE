@@ -6,6 +6,8 @@ import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "member")
 @Getter
@@ -26,4 +28,15 @@ public class Member extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "team_id")
     private Team team;
+
+    @Column(nullable = false)
+    private boolean isLeader;
+
+    @Column(name = "kicked_at")
+    private LocalDateTime kickedAt;
+
+    public void kickOut() {
+        this.kickedAt = LocalDateTime.now();
+    }
+
 }

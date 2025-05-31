@@ -2,6 +2,7 @@ package goormthon_group4.backend.domain.team.entity;
 
 import goormthon_group4.backend.domain.application.entity.Application;
 import goormthon_group4.backend.domain.member.entity.Member;
+import goormthon_group4.backend.domain.notify.entity.Notify;
 import goormthon_group4.backend.domain.project.entity.Project;
 import goormthon_group4.backend.domain.tool_link.entity.ToolLink;
 import goormthon_group4.backend.domain.user.entity.User;
@@ -26,6 +27,7 @@ public class Team extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Builder.Default
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Member> members = new ArrayList<>();
 
