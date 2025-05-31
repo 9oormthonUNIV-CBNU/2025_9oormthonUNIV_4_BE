@@ -29,12 +29,12 @@ public class ApplicationController {
     @Operation(summary = "팀에 지원서 제출", description = "지정된 팀에 지원서를 제출")
     public ApiResponse<ApplicationResponseDto> submitApplication(
             @PathVariable Long teamId,
-            @RequestPart("application") ApplicationRequestDto applicationRequestDto,
-            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+            @ModelAttribute ApplicationRequestDto applicationRequestDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        ApplicationResponseDto responseDto = applicationService.submitApplication(teamId, applicationRequestDto, customUserDetails, multipartFile);
-        return ApiResponse.success(responseDto);
+        MultipartFile file = applicationRequestDto.getFile();
+        ApplicationResponseDto applicationResponseDto = applicationService.submitApplication(teamId, applicationRequestDto, customUserDetails, file);
+        return ApiResponse.success(applicationResponseDto);
     }
 
     @Transactional(readOnly = true)

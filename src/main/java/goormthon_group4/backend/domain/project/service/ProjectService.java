@@ -1,9 +1,6 @@
 package goormthon_group4.backend.domain.project.service;
 
-import goormthon_group4.backend.domain.project.dto.CategoryRequestDto;
-import goormthon_group4.backend.domain.project.dto.CategoryResponseDto;
-import goormthon_group4.backend.domain.project.dto.ProjectRequestDto;
-import goormthon_group4.backend.domain.project.dto.ProjectResponseDto;
+import goormthon_group4.backend.domain.project.dto.*;
 import goormthon_group4.backend.domain.project.entity.Category;
 import goormthon_group4.backend.domain.project.entity.Project;
 import goormthon_group4.backend.domain.project.entity.ProjectCategory;
@@ -11,6 +8,7 @@ import goormthon_group4.backend.domain.project.entity.ProjectStatus;
 import goormthon_group4.backend.domain.project.repository.CategoryRepository;
 import goormthon_group4.backend.domain.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,38 +30,67 @@ public class ProjectService {
     private final CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
-    public Page<ProjectResponseDto> getProjects(int page) {
-        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
+    public Page<ProjectResponseDto> getProjects(int page, String sortBy) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(sortBy));
         return projectRepository.findAll(pageable)
                 .map(this::mapToResponse);
     }
 
+
     @Transactional(readOnly = true)
-    public Page<ProjectResponseDto> searchProjects(String keyword, int page) {
-        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
+    public ProjectResponseDto getProjectDetail(Long id) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 프로젝트가 없습니다. id=" + id));
+
+        project.getCategories().forEach(pc -> Hibernate.initialize(pc.getCategory()));
+
+        List<Category> categories = project.getCategories().stream()
+                .map(ProjectCategory::getCategory)
+                .toList();
+
+        List<Project> similar = projectRepository.findTop6SimilarProjects(categories, project.getId());
+
+        similar.forEach(p -> p.getCategories().forEach(pc -> Hibernate.initialize(pc.getCategory())));
+
+        List<RelatedProjectDto> relatedDtos = similar.stream()
+                .map(p -> RelatedProjectDto.builder()
+                        .id(p.getId())
+                        .title(p.getTitle())
+                        .imageUrl(p.getImageUrl())
+                        .build())
+                .toList();
+
+        ProjectResponseDto dto = mapToResponse(project);
+        dto.setRelatedProjects(relatedDtos);
+        return dto;
+    }
+
+
+    @Transactional(readOnly = true)
+    public Page<ProjectResponseDto> searchProjects(String keyword, int page, String sortBy) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(sortBy));
         return projectRepository
                 .findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword, pageable)
                 .map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
-    public Page<ProjectResponseDto> getProjectsByStatus(ProjectStatus status, int page) {
-        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
+    public Page<ProjectResponseDto> getProjectsByStatus(ProjectStatus status, int page, String sortBy) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(sortBy));
         return projectRepository.findByStatus(status, pageable)
                 .map(this::mapToResponse);
     }
 
+
     @Transactional
     public ProjectResponseDto createProject(ProjectRequestDto dto) {
         Project project = buildFromDto(dto);
+        project.setStatus(determineStatus(dto.getEndAt())); // 자동 설정
 
         List<ProjectCategory> pcs = dto.getCategories().stream()
-                // 1) 제목만 뽑아서 trim
                 .map(CategoryRequestDto::getTitle)
                 .map(String::trim)
-                // 2) 중복 제거
                 .distinct()
-                // 3) 헬퍼로 기존 조회 / 신규 생성 + 매핑
                 .map(title -> toProjectCategoryByTitle(title, project))
                 .collect(Collectors.toList());
 
@@ -78,14 +107,14 @@ public class ProjectService {
         project.setTitle(dto.getTitle());
         project.setDescription(dto.getDescription());
         project.setContent(dto.getContent());
-        project.setStatus(dto.getStatus());
         project.setStartAt(dto.getStartAt());
         project.setEndAt(dto.getEndAt());
         project.setEmail(dto.getEmail());
         project.setFileUrl(dto.getFileUrl());
         project.setImageUrl(dto.getImageUrl());
 
-        // 카테고리 재설정
+        project.setStatus(determineStatus(dto.getEndAt()));
+
         project.getCategories().clear();
         projectRepository.flush();
         List<ProjectCategory> updated = dto.getCategories().stream()
@@ -120,6 +149,28 @@ public class ProjectService {
                 .build();
     }
 
+    private String calculateDDay(LocalDate endDate) {
+        long days = ChronoUnit.DAYS.between(LocalDate.now(), endDate);
+        if (days == 0) return "D-day";
+        else if (days > 0) return "D-" + days;
+        else return "D+" + Math.abs(days);
+    }
+
+    private ProjectStatus determineStatus(LocalDate endAt) {
+        long days = ChronoUnit.DAYS.between(LocalDate.now(), endAt);
+        if (days < 0) return ProjectStatus.Closed;
+        else if (days <= 2) return ProjectStatus.Soon;
+        else return ProjectStatus.Open;
+    }
+
+    private String determineStatusLabel(ProjectStatus status) {
+        return switch (status) {
+            case Open -> "접수중";
+            case Soon -> "마감임박";
+            case Closed -> "접수마감";
+        };
+    }
+
     private ProjectResponseDto mapToResponse(Project project) {
         List<CategoryResponseDto> cats = project.getCategories().stream()
                 .map(pc -> new CategoryResponseDto(
@@ -129,18 +180,18 @@ public class ProjectService {
         return ProjectResponseDto.builder()
                 .id(project.getId())
                 .companyName(project.getCompanyName())
-                .createdAt(project.getCreatedAt())
-                .updatedAt(project.getUpdatedAt())
                 .title(project.getTitle())
                 .description(project.getDescription())
                 .content(project.getContent())
                 .status(project.getStatus())
+                .statusLabel(determineStatusLabel(project.getStatus()))
                 .startAt(project.getStartAt())
                 .endAt(project.getEndAt())
                 .email(project.getEmail())
                 .fileUrl(project.getFileUrl())
                 .imageUrl(project.getImageUrl())
                 .categories(cats)
+                .dDay(calculateDDay(project.getEndAt()))
                 .build();
     }
 
@@ -150,7 +201,6 @@ public class ProjectService {
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .content(dto.getContent())
-                .status(dto.getStatus())
                 .startAt(dto.getStartAt())
                 .endAt(dto.getEndAt())
                 .email(dto.getEmail())

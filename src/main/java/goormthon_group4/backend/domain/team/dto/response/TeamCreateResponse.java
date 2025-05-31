@@ -29,7 +29,9 @@ public class TeamCreateResponse {
     this.endAt = team.getEndAt();
     this.title = team.getTitle();
     this.content = team.getContent();
-    this.fileUrl = team.getFileUrl();
+    if (team.getFileUrl() != null) {
+      this.fileUrl = team.getFileUrl();
+    }
     this.leaderId = team.getLeader().getId();
   }
 

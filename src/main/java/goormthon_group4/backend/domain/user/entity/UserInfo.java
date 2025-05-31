@@ -1,6 +1,5 @@
 package goormthon_group4.backend.domain.user.entity;
 
-import goormthon_group4.backend.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class UserInfo extends BaseEntity {
+public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,7 +33,7 @@ public class UserInfo extends BaseEntity {
     @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY)
     private User user;
 
-    public void update(String nickname, String major, String university, String introduce) {
+    public void update(String nickname, String major, String university, String introduce, String imgUrl) {
         this.nickname = nickname;
         this.major = major;
         this.university = university;

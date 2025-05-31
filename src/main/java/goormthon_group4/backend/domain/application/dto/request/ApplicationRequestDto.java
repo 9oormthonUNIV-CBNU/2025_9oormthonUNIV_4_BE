@@ -22,5 +22,5 @@ public class ApplicationRequestDto {
     private String strengthsExperience;
     private String additionalInfo;
 
-    private MultipartFile file; // 첨부파일
+    private MultipartFile file;
 }

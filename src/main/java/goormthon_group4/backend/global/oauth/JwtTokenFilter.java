@@ -3,6 +3,8 @@ package goormthon_group4.backend.global.oauth;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.domain.user.repository.UserRepository;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
+import goormthon_group4.backend.global.common.exception.CustomException;
+import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
@@ -74,11 +76,26 @@ public class JwtTokenFilter extends GenericFilterBean {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (Exception e) {
-            // JWT 파싱 실패나 유효하지 않은 경우
-            e.printStackTrace();
-            httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-            httpServletResponse.setContentType("application/json");
-            httpServletResponse.getWriter().write("Invalid token");
+            CustomException customException = new CustomException(ErrorCode.INVALID_TOKEN);
+
+            httpServletResponse.setStatus(customException.getErrorCode().getHttpStatus().value());
+            httpServletResponse.setContentType("application/json;charset=UTF-8");
+
+            String jsonResponse = String.format("""
+                {
+                  "success": false,
+                  "status": %d,
+                  "code": "%s",
+                  "message": "%s",
+                  "data": null
+                }
+                """,
+                customException.getErrorCode().getHttpStatus().value(),
+                customException.getErrorCode().getCode(),
+                customException.getErrorCode().getMessage()
+            );
+            httpServletResponse.getWriter().write(jsonResponse);
+
             return;
         }
 

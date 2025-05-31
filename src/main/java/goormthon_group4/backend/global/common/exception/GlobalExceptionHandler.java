@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
   }
 
   // ✅ 공통 응답 생성 (ApiResponse 사용)
-  private ResponseEntity<ApiResponse<Void>> buildErrorResponse(ErrorCode errorCode, String customMessage) {
+  private ResponseEntity<ApiResponse<Void>> buildErrorResponse(BaseErrorCode errorCode, String customMessage) {
     ApiResponse<Void> response = ApiResponse.error(errorCode, customMessage);
     return new ResponseEntity<>(response, errorCode.getHttpStatus());
   }
