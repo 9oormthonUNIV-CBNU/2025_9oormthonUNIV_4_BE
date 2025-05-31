@@ -60,19 +60,20 @@ public class GoogleOauth2LoginSuccess extends SimpleUrlAuthenticationSuccessHand
         String jwtToken = jwtProvider.createToken(user.getEmail(), user.getRole().toString());
         System.out.println(jwtToken);
 
-
+        /*
         // jwt 쿠키 저장
         Cookie jwtCookie = new Cookie("token", jwtToken);
         jwtCookie.setHttpOnly(true);
         jwtCookie.setPath("/"); // 모든 경로에서 쿠키 사용 가능
         jwtCookie.setMaxAge(3600);   // 유효 시간 (초 단위)
         response.addCookie(jwtCookie);
+         */
 
         // 프론트엔드로 리다이렉트 (회원 여부에 따라 다른 경로)
         if (isNewUser) {
-            response.sendRedirect("http://localhost:3000/register");
+            response.sendRedirect("http://localhost:3000/register?token=" + jwtToken);
         } else {
-            response.sendRedirect("http://localhost:3000/");
+            response.sendRedirect("http://localhost:3000/?token=" + jwtToken);
         }
     }
 }
