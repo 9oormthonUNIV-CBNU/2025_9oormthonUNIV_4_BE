@@ -1,6 +1,7 @@
 package goormthon_group4.backend.domain.team.service;
 
 import goormthon_group4.backend.domain.member.dto.MemberResponseDto;
+import goormthon_group4.backend.domain.member.entity.Member;
 import goormthon_group4.backend.domain.notify.dto.NotifySummaryDto;
 import goormthon_group4.backend.domain.notify.repository.NotifyRepository;
 import goormthon_group4.backend.domain.notify.service.NotifyService;
@@ -82,9 +83,19 @@ public class TeamService {
       team.setFileUrl(requestDto.getFileUrl());
     }
 
-    // 양방향 연관관계 설정
+    Member leaderMember = Member.builder()
+            .user(user)
+            .team(team)
+            .isLeader(true)
+            .build();
+
+    user.getMembers().add(leaderMember);
+    team.getMembers().add(leaderMember);
+
+    // 양방향 관계 설정
     user.addTeam(team);
     project.addTeam(team);
+
 
     teamRepository.save(team);
 
@@ -133,7 +144,9 @@ public class TeamService {
   public TeamDetailResponse getTeamDetail(Long teamId) {
     Team team = getTeamById(teamId);
     TeamDetailProjectResponse projectResponse = TeamDetailProjectResponse.from(team.getProject());
+
     List<MemberResponseDto> members = team.getMembers().stream()
+            .filter(member -> member.getKickedAt() == null)
             .map(member -> {
               User user = member.getUser();
               UserInfo info = user.getUserInfo();
@@ -141,16 +154,18 @@ public class TeamService {
                       .userId(user.getId())
                       .username(info.getNickname())
                       .imgUrl(info.getImgUrl())
-                      .isLeader(team.getLeader().getId().equals(user.getId()))
+                      .isLeader(member.isLeader())
                       .joinedDaysAgo((int) DAYS.between(member.getCreatedAt().toLocalDate(), LocalDate.now()))
+                      .kickedAt(member.getKickedAt())
                       .build();
-            }).toList();
+            })
+            .toList();
 
     // 공지사항 3개 페이징 조회
     Page<NotifySummaryDto> notifyPage = notifyService.getNoticesByTeam(teamId, 0, 3);
     List<NotifySummaryDto> notifies = notifyPage.getContent();
 
-    return TeamDetailResponse.from(team, projectResponse, members.size(), notifies);
+    return TeamDetailResponse.from(team, projectResponse, members.size(), notifies, members);
   }
 
 
