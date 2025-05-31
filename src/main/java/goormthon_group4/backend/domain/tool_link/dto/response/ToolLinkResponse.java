@@ -10,5 +10,6 @@ import lombok.Getter;
 public class ToolLinkResponse {
   private Long id;
   private String title;
+  private String toolLink;
   private String imgUrl;
 }

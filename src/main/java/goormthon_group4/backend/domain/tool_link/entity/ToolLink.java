@@ -20,6 +20,10 @@ public class ToolLink extends BaseEntity {
     @Column()
     private String title;
 
+    @Column(name="tool_link")
+    private String toolLink;
+
+
     @Column(name = "img_url")
     private String imgUrl;
 

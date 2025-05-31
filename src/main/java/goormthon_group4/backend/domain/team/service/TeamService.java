@@ -85,7 +85,7 @@ public class TeamService {
     Team team = getTeamById(id);
 
     if (!Objects.equals(team.getLeader().getId(), userId)) {
-      throw new CustomException(TeamErrorCode.DONT_HAVE_GRANTED);
+      throw new CustomException(ErrorCode.DONT_HAVE_GRANTED);
     }
 
     // 요청 값을 기반으로 팀 정보 업데이트
@@ -104,7 +104,7 @@ public class TeamService {
   public void delete(Long userId,Long id) {
     Team team = getTeamById(id);
     if(!Objects.equals(team.getLeader().getId(), userId)) {
-      throw new CustomException(TeamErrorCode.DONT_HAVE_GRANTED);
+      throw new CustomException(ErrorCode.DONT_HAVE_GRANTED);
     }
     teamRepository.delete(team);
   }
