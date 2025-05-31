@@ -30,6 +30,7 @@ public enum ErrorCode implements BaseErrorCode {
   NOTIFY_NOT_FOUND(HttpStatus.NOT_FOUND, "404_003", "공지사항을 찾을 수 없습니다."),
   TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "404_004", "팀을 찾을 수 없습니다."),
   MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "404_005", "팀 멤버를 찾을 수 없습니다."),
+  DONT_HAVE_GRANTED(HttpStatus.NOT_FOUND, "404", "팀장이 아닙니다."),
 
   // 409 CONFLICT
   DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "409_001", "이미 존재하는 리소스입니다."),
