@@ -5,7 +5,6 @@ import goormthon_group4.backend.domain.user.dto.UserInfoResponseDto;
 import goormthon_group4.backend.domain.user.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
