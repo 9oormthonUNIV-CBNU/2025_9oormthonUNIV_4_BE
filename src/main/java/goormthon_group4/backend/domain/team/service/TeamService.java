@@ -1,6 +1,7 @@
 package goormthon_group4.backend.domain.team.service;
 
 import goormthon_group4.backend.domain.member.dto.MemberResponseDto;
+import goormthon_group4.backend.domain.member.entity.Member;
 import goormthon_group4.backend.domain.notify.dto.NotifySummaryDto;
 import goormthon_group4.backend.domain.notify.repository.NotifyRepository;
 import goormthon_group4.backend.domain.notify.service.NotifyService;
@@ -82,9 +83,19 @@ public class TeamService {
       team.setFileUrl(requestDto.getFileUrl());
     }
 
-    // 양방향 연관관계 설정
+    Member leaderMember = Member.builder()
+            .user(user)
+            .team(team)
+            .isLeader(true)
+            .build();
+
+    user.getMembers().add(leaderMember);
+    team.getMembers().add(leaderMember);
+
+    // 양방향 관계 설정
     user.addTeam(team);
     project.addTeam(team);
+
 
     teamRepository.save(team);
 
@@ -141,7 +152,7 @@ public class TeamService {
                       .userId(user.getId())
                       .username(info.getNickname())
                       .imgUrl(info.getImgUrl())
-                      .isLeader(team.getLeader().getId().equals(user.getId()))
+                      .isLeader(member.isLeader())
                       .joinedDaysAgo((int) DAYS.between(member.getCreatedAt().toLocalDate(), LocalDate.now()))
                       .build();
             }).toList();
@@ -150,7 +161,7 @@ public class TeamService {
     Page<NotifySummaryDto> notifyPage = notifyService.getNoticesByTeam(teamId, 0, 3);
     List<NotifySummaryDto> notifies = notifyPage.getContent();
 
-    return TeamDetailResponse.from(team, projectResponse, members.size(), notifies);
+    return TeamDetailResponse.from(team, projectResponse, members.size(), notifies, members);
   }
 
 

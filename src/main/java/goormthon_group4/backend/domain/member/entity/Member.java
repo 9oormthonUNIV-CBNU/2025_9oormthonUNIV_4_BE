@@ -26,4 +26,8 @@ public class Member extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "team_id")
     private Team team;
+
+    @Column(nullable = false)
+    private boolean isLeader;
+
 }
