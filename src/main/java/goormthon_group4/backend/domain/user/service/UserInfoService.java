@@ -1,6 +1,10 @@
 package goormthon_group4.backend.domain.user.service;
 
+import goormthon_group4.backend.domain.application.entity.Application;
+import goormthon_group4.backend.domain.application.repository.ApplicationRepository;
 import goormthon_group4.backend.domain.user.dto.request.UserInfoRequestDto;
+import goormthon_group4.backend.domain.user.dto.response.MypageFullResponseDto;
+import goormthon_group4.backend.domain.user.dto.response.MypageTeamDto;
 import goormthon_group4.backend.domain.user.dto.response.UserInfoResponseDto;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.domain.user.entity.UserInfo;
@@ -11,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -18,6 +24,7 @@ public class UserInfoService {
 
     private final UserRepository userRepository;
     private final UserInfoRepository userInfoRepository;
+    private final ApplicationRepository applicationRepository;
 
     public void saveUserInfo(UserInfoRequestDto userInfoRequestDto, CustomUserDetails customUserDetails) {
         User user = customUserDetails.getUser();
@@ -65,5 +72,15 @@ public class UserInfoService {
                 userInfoRequestDto.getUniversity(),
                 userInfoRequestDto.getIntroduce(),
                 userInfoRequestDto.getImgUrl());
+    }
+
+    public MypageFullResponseDto getMypage(CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
+
+        // 해당 유저가 작성한 모든 지원서 조회
+        List<Application> applications = applicationRepository.findAllByUser(user);
+
+        // DTO로 변환 후 반환
+        return MypageFullResponseDto.form(user, applications);
     }
 }
