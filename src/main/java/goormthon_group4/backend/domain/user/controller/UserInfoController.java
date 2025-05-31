@@ -6,7 +6,6 @@ import goormthon_group4.backend.domain.user.service.UserInfoService;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
