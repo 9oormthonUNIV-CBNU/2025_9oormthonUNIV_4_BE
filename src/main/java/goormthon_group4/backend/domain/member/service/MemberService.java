@@ -42,32 +42,27 @@ public class MemberService {
     }
 
     @Transactional
-    public void kickMemberFromTeam(Long teamId, Long targetUserId, Long requesterUserId) {
+    public void kickMember(Long teamId, Long targetUserId, Long loginUserId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
 
-        User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        User requester = userRepository.findById(requesterUserId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        // 요청자가 팀 멤버인지 확인
-        Member requesterMember = memberRepository.findByTeamAndUser(team, requester)
+        Member requester = memberRepository.findByTeam_IdAndUser_IdAndKickedAtIsNull(teamId, loginUserId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (!requesterMember.isLeader()) {
+        if (!requester.isLeader()) {
             throw new CustomException(ErrorCode.FORBIDDEN); // 팀장이 아님
         }
 
-        if (requesterUserId.equals(targetUserId)) {
-            throw new CustomException(ErrorCode.CANNOT_REMOVE_LEADER);
+        if (loginUserId.equals(targetUserId)) {
+            throw new CustomException(ErrorCode.CANNOT_REMOVE_LEADER); // 자기 자신 내보내기 금지
         }
 
-        Member targetMember = memberRepository.findByTeamAndUser(team, targetUser)
+        Member target = memberRepository.findByTeam_IdAndUser_IdAndKickedAtIsNull(teamId, targetUserId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        targetMember.kickOut();
+
+        // 6. 내보내기 처리 (kickedAt 기록)
+        target.kickOut();
     }
 
 

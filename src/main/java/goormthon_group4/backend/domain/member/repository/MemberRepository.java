@@ -9,5 +9,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    Optional<Member> findByTeamAndUser(Team team, User user);
+    Optional<Member> findByTeam_IdAndUser_IdAndKickedAtIsNull(Long teamId, Long userId);
 }

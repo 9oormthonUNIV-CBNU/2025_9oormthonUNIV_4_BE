@@ -2,6 +2,7 @@ package goormthon_group4.backend.domain.member.controller;
 
 import goormthon_group4.backend.domain.member.dto.MemberProfileDto;
 import goormthon_group4.backend.domain.member.service.MemberService;
+import goormthon_group4.backend.global.auth.CustomUserDetails;
 import goormthon_group4.backend.global.common.exception.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,14 +20,15 @@ public class MemberController {
         return ApiResponse.success(memberService.getMemberProfile(userId));
     }
 
-
     @DeleteMapping("/{teamId}/members/{userId}")
     public ApiResponse<Void> removeTeamMember(
             @PathVariable Long teamId,
             @PathVariable Long userId,
-            @AuthenticationPrincipal Long loginUserId) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        memberService.kickMemberFromTeam(teamId, userId, loginUserId);
+        Long loginUserId = userDetails.getUser().getId();
+
+        memberService.kickMember(teamId, userId, loginUserId);
         return ApiResponse.success(null);
     }
 }
