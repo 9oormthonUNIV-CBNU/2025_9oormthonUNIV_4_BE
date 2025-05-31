@@ -1,5 +1,6 @@
 package goormthon_group4.backend.domain.team.dto.response;
 
+import goormthon_group4.backend.domain.member.dto.MemberResponseDto;
 import goormthon_group4.backend.domain.notify.dto.NotifySummaryDto;
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.team.entity.TeamStatus;
@@ -26,8 +27,9 @@ public class TeamDetailResponse {
   private TeamDetailProjectResponse project;
   private int memberCount;
   private List<NotifySummaryDto> notifies;
+  private List<MemberResponseDto> members;
 
-  public static TeamDetailResponse from(Team team, TeamDetailProjectResponse project, int memberCount,List<NotifySummaryDto> notifies) {
+  public static TeamDetailResponse from(Team team, TeamDetailProjectResponse project, int memberCount,List<NotifySummaryDto> notifies, List<MemberResponseDto> members) {
     return TeamDetailResponse.builder()
             .id(team.getId())
             .status(team.getStatus())
@@ -41,6 +43,7 @@ public class TeamDetailResponse {
             .project(project)
             .memberCount(memberCount)
             .notifies(notifies)
+            .members(members)
             .build();
   }
 }
