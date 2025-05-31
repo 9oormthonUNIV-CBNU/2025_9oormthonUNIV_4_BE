@@ -74,8 +74,16 @@ public class UserInfoService {
                 userInfoRequestDto.getImgUrl());
     }
 
+    @Transactional(readOnly = true)
     public MypageFullResponseDto getMypage(CustomUserDetails customUserDetails) {
         User user = customUserDetails.getUser();
+
+        // Lazy 로딩 트리거
+        UserInfo userInfo = user.getUserInfo();
+        if (userInfo != null) {
+            userInfo.getNickname(); // 아무 필드나 호출하면 Lazy proxy가 초기화됨
+        }
+
 
         // 해당 유저가 작성한 모든 지원서 조회
         List<Application> applications = applicationRepository.findAllByUser(user);

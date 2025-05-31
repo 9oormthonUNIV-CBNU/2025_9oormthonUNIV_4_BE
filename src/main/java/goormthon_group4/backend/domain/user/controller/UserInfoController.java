@@ -49,14 +49,7 @@ public class UserInfoController {
     @GetMapping("/mypage")
     @Operation(summary = "마이페이지 조회", description = "현재 로그인한 유저의 마이페이지 정보 반환")
     public ApiResponse<MypageFullResponseDto> getMypage(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        User user = customUserDetails.getUser();
-
-        // 해당 유저가 지원한 지원서 리스트 조회
-        List<Application> applications = applicationRepository.findAllByUser(user);
-
-        // DTO 변환
-        MypageFullResponseDto mypageFullResponseDto = MypageFullResponseDto.form(user, applications);
-
+        MypageFullResponseDto mypageFullResponseDto = userInfoService.getMypage(customUserDetails);
         return ApiResponse.success(mypageFullResponseDto);
     }
 }
