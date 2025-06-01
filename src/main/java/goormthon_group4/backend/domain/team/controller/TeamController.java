@@ -95,6 +95,22 @@ public class TeamController {
     return ApiResponse.success(fileUrl);
   }
 
+  @Operation(summary = "!최종 산출물 제출 하나씩!", description = "팀에서 최종 산출물 하나를 삭제합니다.")
+  @DeleteMapping("/output/{outputId}")
+  public ApiResponse<String> deleteFinalOutput(@PathVariable Long outputId,
+                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+    teamService.deleteOutput(outputId, userDetails.getUser());
+    return ApiResponse.success("산출물이 성공적으로 삭제되었습니다.");
+  }
+
+  @Operation(summary = "팀 산출물 전체 삭제", description = "특정 팀의 모든 산출물을 삭제합니다.")
+  @DeleteMapping("/team/{teamId}/outputs")
+  public ApiResponse<String> deleteAllOutputsByTeam(@PathVariable Long teamId,
+                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+    teamService.deleteAllOutputsByTeam(teamId, userDetails.getUser());
+    return ApiResponse.success("해당 팀의 모든 산출물이 삭제되었습니다.");
+  }
+
 
 
 

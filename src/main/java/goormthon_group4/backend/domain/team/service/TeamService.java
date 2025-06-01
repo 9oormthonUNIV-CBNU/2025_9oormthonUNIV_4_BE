@@ -213,4 +213,36 @@ public class TeamService {
 
     return fileUrl;
   }
+
+  @Transactional
+  public void deleteOutput(Long outputId, User user) {
+    Output output = outputRepository.findById(outputId)
+            .orElseThrow(() -> new CustomException(TeamErrorCode.OUTPUT_NOT_FOUND));
+
+    // 권한 검사
+    if (!output.getTeam().getLeader().getId().equals(user.getId())) {
+      throw new CustomException(ErrorCode.DONT_HAVE_GRANTED);
+    }
+
+    outputRepository.delete(output);
+  }
+
+  @Transactional
+  public void deleteAllOutputsByTeam(Long teamId, User user) {
+    Team team = teamRepository.findById(teamId)
+            .orElseThrow(() -> new CustomException(TeamErrorCode.TEAM_NOT_FOUND));
+
+    if (!team.getLeader().getId().equals(user.getId())) {
+      throw new CustomException(ErrorCode.FORBIDDEN);
+    }
+
+    List<Output> outputs = outputRepository.findAllByTeam(team);
+
+    // S3에서도 삭제
+    for (Output output : outputs) {
+      s3Service.deleteFile(output.getFileUrl());
+    }
+
+    outputRepository.deleteAll(outputs);
+  }
 }
