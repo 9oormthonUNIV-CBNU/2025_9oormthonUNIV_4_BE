@@ -1,5 +1,6 @@
 package goormthon_group4.backend.domain.team.controller;
 
+import goormthon_group4.backend.domain.team.dto.request.OutputUploadDto;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.MyTeamResponse;
@@ -15,8 +16,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "팀 API")
 @RestController
@@ -81,9 +84,17 @@ public class TeamController {
       @AuthenticationPrincipal CustomUserDetails userDetails
   ) {
     return ApiResponse.success(teamService.getTeamsByUserId(userDetails.getUser().getId()));
-
-
   }
+
+  @Operation(summary = "최종 산출물 제출", description = "팀에서 최종 산출물을 업로드합니다.")
+  @PostMapping(value = "{id}/output", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ApiResponse<String> uploadFinalOutput(@PathVariable Long id,
+                                               @RequestPart("file") MultipartFile file,
+                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+    String fileUrl = teamService.uploadFinalOutput(id, file, userDetails.getUser());
+    return ApiResponse.success(fileUrl);
+  }
+
 
 
 

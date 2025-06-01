@@ -57,6 +57,7 @@ public class S3Service {
 
       return fileUrl;
     } catch (Exception e) {
+      e.printStackTrace();
       throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
     }
 
