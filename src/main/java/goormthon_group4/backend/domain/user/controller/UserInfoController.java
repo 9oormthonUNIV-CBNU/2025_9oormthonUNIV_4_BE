@@ -5,6 +5,7 @@ import goormthon_group4.backend.domain.user.dto.response.MypageFullResponseDto;
 import goormthon_group4.backend.domain.user.dto.response.UserInfoResponseDto;
 import goormthon_group4.backend.domain.user.service.UserInfoService;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
+import goormthon_group4.backend.global.common.exception.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
