@@ -1,5 +1,6 @@
 package goormthon_group4.backend.domain.team.controller;
 
+import goormthon_group4.backend.domain.team.dto.request.OutputUploadDto;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.MyTeamResponse;
@@ -15,8 +16,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "팀 API")
 @RestController
@@ -81,9 +84,33 @@ public class TeamController {
       @AuthenticationPrincipal CustomUserDetails userDetails
   ) {
     return ApiResponse.success(teamService.getTeamsByUserId(userDetails.getUser().getId()));
-
-
   }
+
+  @Operation(summary = "최종 산출물 제출", description = "팀에서 최종 산출물을 업로드합니다.")
+  @PostMapping(value = "{id}/output", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ApiResponse<String> uploadFinalOutput(@PathVariable Long id,
+                                               @RequestPart("file") MultipartFile file,
+                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+    String fileUrl = teamService.uploadFinalOutput(id, file, userDetails.getUser());
+    return ApiResponse.success(fileUrl);
+  }
+
+  @Operation(summary = "!최종 산출물 제출 하나씩!", description = "팀에서 최종 산출물 하나를 삭제합니다.")
+  @DeleteMapping("/output/{outputId}")
+  public ApiResponse<String> deleteFinalOutput(@PathVariable Long outputId,
+                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+    teamService.deleteOutput(outputId, userDetails.getUser());
+    return ApiResponse.success("산출물이 성공적으로 삭제되었습니다.");
+  }
+
+  @Operation(summary = "팀 산출물 전체 삭제", description = "특정 팀의 모든 산출물을 삭제합니다.")
+  @DeleteMapping("/team/{teamId}/outputs")
+  public ApiResponse<String> deleteAllOutputsByTeam(@PathVariable Long teamId,
+                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+    teamService.deleteAllOutputsByTeam(teamId, userDetails.getUser());
+    return ApiResponse.success("해당 팀의 모든 산출물이 삭제되었습니다.");
+  }
+
 
 
 
