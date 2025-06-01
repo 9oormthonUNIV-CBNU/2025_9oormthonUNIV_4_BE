@@ -1,18 +1,20 @@
 package goormthon_group4.backend.domain.user.service;
 
-import goormthon_group4.backend.domain.user.dto.UserInfoRequestDto;
-import goormthon_group4.backend.domain.user.dto.UserInfoResponseDto;
+import goormthon_group4.backend.domain.application.entity.Application;
+import goormthon_group4.backend.domain.application.repository.ApplicationRepository;
+import goormthon_group4.backend.domain.user.dto.request.UserInfoRequestDto;
+import goormthon_group4.backend.domain.user.dto.response.MypageFullResponseDto;
+import goormthon_group4.backend.domain.user.dto.response.UserInfoResponseDto;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.domain.user.entity.UserInfo;
 import goormthon_group4.backend.domain.user.repository.UserInfoRepository;
 import goormthon_group4.backend.domain.user.repository.UserRepository;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.boot.origin.Origin.from;
+import java.util.List;
 
 @Service
 @Transactional
@@ -21,6 +23,7 @@ public class UserInfoService {
 
     private final UserRepository userRepository;
     private final UserInfoRepository userInfoRepository;
+    private final ApplicationRepository applicationRepository;
 
     public void saveUserInfo(UserInfoRequestDto userInfoRequestDto, CustomUserDetails customUserDetails) {
         User user = customUserDetails.getUser();
@@ -68,5 +71,20 @@ public class UserInfoService {
                 userInfoRequestDto.getUniversity(),
                 userInfoRequestDto.getIntroduce(),
                 userInfoRequestDto.getImgUrl());
+    }
+
+    @Transactional
+    public MypageFullResponseDto getMypage(User user) {
+
+        // 세션 안에서 다시 영속화
+        User managedUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+        // 해당 유저가 작성한 모든 지원서 조회
+        List<Application> applications = applicationRepository.findAllByUser(managedUser);
+
+        // DTO로 변환 후 반환
+        return MypageFullResponseDto.from(user, applications);
     }
 }

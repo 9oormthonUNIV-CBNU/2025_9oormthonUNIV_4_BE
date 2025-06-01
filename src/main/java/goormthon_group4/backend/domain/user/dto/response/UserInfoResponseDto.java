@@ -1,10 +1,9 @@
-package goormthon_group4.backend.domain.user.dto;
+package goormthon_group4.backend.domain.user.dto.response;
 
 import goormthon_group4.backend.domain.user.entity.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import goormthon_group4.backend.domain.user.entity.UserInfo;
 
 @Getter
 @AllArgsConstructor

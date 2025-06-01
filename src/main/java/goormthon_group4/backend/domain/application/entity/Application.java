@@ -61,7 +61,7 @@ public class Application extends BaseEntity {
   @Column(nullable = false)
   private String strengthsExperience;
 
-  @Column(nullable = true)
+  @Column(length = 1000, nullable = true)
   private String fileUrl; // nullable
 
   @Column(nullable = true)
