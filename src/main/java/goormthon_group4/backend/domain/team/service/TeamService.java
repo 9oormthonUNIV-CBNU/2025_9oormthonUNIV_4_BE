@@ -117,6 +117,7 @@ public class TeamService {
 
     // 요청 값을 기반으로 팀 정보 업데이트
     team.setTitle(request.getTitle());
+    team.setStatus(request.getStatus());
     team.setContent(request.getContent());
     team.setMaxUserCount(request.getMaxUserCount());
     team.setStartAt(request.getStartAt());
