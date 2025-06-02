@@ -22,7 +22,7 @@ public class MainController {
   // ✅ DTO 유효성 검증 (@RequestBody + @Valid)
   @PostMapping("/validate-body")
   public ApiResponse<String> validateBody(@RequestBody @Validated TestRequest request) {
-    return ApiResponse.success("파라 미 터가 유 효합니다.");
+    return ApiResponse.success("파라 미 터가유 효합니다.");
   }
 
   // ✅ RequestParam 검증
