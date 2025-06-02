@@ -9,6 +9,7 @@ import goormthon_group4.backend.domain.application.repository.ApplicationReposit
 import goormthon_group4.backend.domain.member.entity.Member;
 import goormthon_group4.backend.domain.s3.service.S3Service;
 import goormthon_group4.backend.domain.team.entity.Team;
+import goormthon_group4.backend.domain.team.exception.TeamErrorCode;
 import goormthon_group4.backend.domain.team.repository.TeamRepository;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.domain.user.repository.UserRepository;
@@ -16,6 +17,7 @@ import goormthon_group4.backend.global.auth.CustomUserDetails;
 import goormthon_group4.backend.global.common.exception.CustomException;
 import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -72,6 +74,27 @@ public class ApplicationService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "지원서를 찾을 수 없습니다."));
 
         return ApplicationResponseDto.from(application);
+    }
+
+    @Transactional
+    public List<ApplicationResponseDto> getApplications(Long teamId, CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(TeamErrorCode.TEAM_NOT_FOUND));
+
+        // 팀장 권한 확인
+        if (!team.getLeader().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.DONT_HAVE_GRANTED);
+        }
+
+        // 팀에 속한 모든 지원서 조회
+        List<Application> applications = applicationRepository.findAllByTeam(team);
+
+        // DTO 변환
+        return applications.stream()
+                .map(ApplicationResponseDto::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
