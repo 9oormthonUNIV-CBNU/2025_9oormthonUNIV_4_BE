@@ -1,5 +1,6 @@
 package goormthon_group4.backend.domain.user.controller;
 
+import goormthon_group4.backend.domain.user.dto.request.IntroduceUpdateRequestDto;
 import goormthon_group4.backend.domain.user.dto.request.UserInfoRequestDto;
 import goormthon_group4.backend.domain.user.dto.response.MypageFullResponseDto;
 import goormthon_group4.backend.domain.user.dto.response.UserInfoResponseDto;
@@ -34,10 +35,18 @@ public class UserInfoController {
     public ResponseEntity<String> updateUserInfo(@RequestBody UserInfoRequestDto userInfoRequestDto,
                                                  @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         userInfoService.updateUserInfo(userInfoRequestDto, customUserDetails);
-        return ResponseEntity.ok("UserInfo 수정 완료;");
+        return ResponseEntity.ok("UserInfo 수정 완료");
     }
 
     @GetMapping("/mypage")
     public ApiResponse<MypageFullResponseDto> getMypage(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ApiResponse.success(userInfoService.getMypage(userDetails.getUser()));
-    }}
+    }
+
+    @PutMapping("/mypage/introduce")
+    public ResponseEntity<String> updateIntroduce(@RequestBody IntroduceUpdateRequestDto dto,
+                                                  @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        userInfoService.updateIntroduce(dto.getIntroduce(), customUserDetails);
+        return ResponseEntity.ok("mypage 내 자기소개 수정 완료");
+    }
+}
