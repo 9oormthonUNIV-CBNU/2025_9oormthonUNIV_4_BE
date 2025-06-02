@@ -10,12 +10,7 @@ import goormthon_group4.backend.domain.s3.service.S3Service;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateOnlyStatusRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
-import goormthon_group4.backend.domain.team.dto.response.MyTeamResponse;
-import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
-import goormthon_group4.backend.domain.team.dto.response.TeamDetailProjectResponse;
-import goormthon_group4.backend.domain.team.dto.response.TeamDetailResponse;
-import goormthon_group4.backend.domain.team.dto.response.TeamResponse;
-import goormthon_group4.backend.domain.team.dto.response.TeamUpdateResponse;
+import goormthon_group4.backend.domain.team.dto.response.*;
 import goormthon_group4.backend.domain.team.entity.Output;
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.team.entity.TeamStatus;
@@ -30,6 +25,7 @@ import goormthon_group4.backend.global.common.exception.code.ErrorCode;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -211,29 +207,31 @@ public class TeamService {
         .collect(Collectors.toList());
   }
 
-  public String uploadFinalOutput(Long teamId, MultipartFile file, User user) {
-    Team team = teamRepository.findById(teamId)
-            .orElseThrow(() -> new CustomException(TeamErrorCode.TEAM_NOT_FOUND));
+  public List<OutputUploadResponseDto> uploadFinalOutputs(Long teamId, List<MultipartFile> files, User user) {
+    Team team = getTeamOrThrow(teamId);
 
-    // 팀장인지 권한
     if (!team.getLeader().getId().equals(user.getId())) {
       throw new CustomException(ErrorCode.DONT_HAVE_GRANTED);
     }
 
-    // 파일 업로드
-    String fileUrl = s3Service.uploadFile(file);
+    List<OutputUploadResponseDto> responses = new ArrayList<>();
 
-    // Output 엔티티 생성 & 저장
-    Output output = Output.builder()
-            .team(team)
-            .fileUrl(fileUrl)
-            .build();
+    for (MultipartFile file : files) {
+      if (file != null && !file.isEmpty()) {
+        String fileUrl = s3Service.uploadFile(file);
 
-    outputRepository.save(output);
+        Output output = Output.builder()
+                .team(team)
+                .fileUrl(fileUrl)
+                .build();
 
-    return fileUrl;
+        Output saved = outputRepository.save(output);
+        responses.add(OutputUploadResponseDto.from(saved));
+      }
+    }
+
+    return responses;
   }
-
   @Transactional
   public void deleteOutput(Long teamId, Long outputId, User user) {
     Output output = outputRepository.findById(outputId)
@@ -298,4 +296,9 @@ public class TeamService {
             .toList();
   }
 
+
+  public Team getTeamOrThrow(Long teamId) {
+    return teamRepository.findById(teamId)
+            .orElseThrow(() -> new CustomException(TeamErrorCode.TEAM_NOT_FOUND));
+  }
 }

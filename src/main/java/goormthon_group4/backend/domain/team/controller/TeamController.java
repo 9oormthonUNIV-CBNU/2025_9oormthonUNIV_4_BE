@@ -5,11 +5,7 @@ import goormthon_group4.backend.domain.team.dto.request.OutputUploadDto;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateOnlyStatusRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
-import goormthon_group4.backend.domain.team.dto.response.MyTeamResponse;
-import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
-import goormthon_group4.backend.domain.team.dto.response.TeamDetailResponse;
-import goormthon_group4.backend.domain.team.dto.response.TeamResponse;
-import goormthon_group4.backend.domain.team.dto.response.TeamUpdateResponse;
+import goormthon_group4.backend.domain.team.dto.response.*;
 import goormthon_group4.backend.domain.team.service.TeamService;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
 import goormthon_group4.backend.global.common.exception.response.ApiResponse;
@@ -104,11 +100,11 @@ public class TeamController {
 
   @Operation(summary = "최종 산출물 제출", description = "팀에서 최종 산출물을 업로드합니다.")
   @PostMapping(value = "{teamId}/output", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ApiResponse<String> uploadFinalOutput(@PathVariable Long teamId,
-                                               @RequestPart("file") MultipartFile file,
-                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
-    String fileUrl = teamService.uploadFinalOutput(teamId, file, userDetails.getUser());
-    return ApiResponse.success(fileUrl);
+  public ApiResponse<List<OutputUploadResponseDto>> uploadFinalOutput(@PathVariable Long teamId,
+                                                                      @RequestPart("files") List<MultipartFile> files,
+                                                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
+    List<OutputUploadResponseDto> fileUrls = teamService.uploadFinalOutputs(teamId, files, userDetails.getUser());
+    return ApiResponse.success(fileUrls);
   }
 
   @Operation(summary = "!최종 산출물 제출 하나씩!", description = "팀에서 최종 산출물 하나를 삭제합니다.")
