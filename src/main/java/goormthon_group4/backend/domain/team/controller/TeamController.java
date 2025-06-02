@@ -1,5 +1,6 @@
 package goormthon_group4.backend.domain.team.controller;
 
+import goormthon_group4.backend.domain.member.dto.MemberResponseDto;
 import goormthon_group4.backend.domain.team.dto.request.OutputUploadDto;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -111,4 +113,14 @@ public class TeamController {
     teamService.deleteAllOutputsByTeam(teamId, userDetails.getUser());
     return ApiResponse.success("해당 팀의 모든 산출물이 삭제되었습니다.");
   }
+
+  @Operation(summary = "팀원 관리하기에서 멤버 조회", description = "팀장이 팀원을 관리할 수 있도록 팀장 제외 모든 멤버(내보낸 멤버 포함)를 조회합니다.")
+  @GetMapping("/{teamId}/members/manage")
+  public ResponseEntity<List<MemberResponseDto>> getManageableMembers(
+          @PathVariable Long teamId,
+          @AuthenticationPrincipal CustomUserDetails userDetails) {
+    Long loginUserId = userDetails.getUser().getId();
+    return ResponseEntity.ok(teamService.getManageableMembers(teamId, loginUserId));
+  }
+
 }

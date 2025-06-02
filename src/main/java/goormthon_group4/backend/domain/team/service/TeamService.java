@@ -151,6 +151,7 @@ public class TeamService {
     TeamDetailProjectResponse projectResponse = TeamDetailProjectResponse.from(team.getProject());
 
     List<MemberResponseDto> members = team.getMembers().stream()
+            .filter(member -> member.getKickedAt() == null)
             .map(member -> {
               User user = member.getUser();
               UserInfo info = user.getUserInfo();
@@ -160,7 +161,7 @@ public class TeamService {
                       .imgUrl(info.getImgUrl())
                       .isLeader(member.isLeader())
                       .joinedDaysAgo((int) DAYS.between(member.getCreatedAt().toLocalDate(), LocalDate.now()))
-                      .kickedAt(member.getKickedAt())
+                      .kickedAt(null)
                       .build();
             })
             .toList();
@@ -249,4 +250,32 @@ public class TeamService {
 
     outputRepository.deleteAll(outputs);
   }
+
+  // 팀 관리용 - 팀장 제외 모든 멤버, kicked 멤버도 포함
+  @Transactional
+  public List<MemberResponseDto> getManageableMembers(Long teamId, Long loginUserId) {
+    Team team = getTeamById(teamId);
+
+    if (!team.getLeader().getId().equals(loginUserId)) {
+      throw new CustomException(ErrorCode.FORBIDDEN);
+    }
+
+    return team.getMembers().stream()
+            .filter(member -> !member.isLeader()) // 팀장 제외
+            .map(member -> {
+              User user = member.getUser();
+              UserInfo info = user.getUserInfo();
+
+              return MemberResponseDto.builder()
+                      .userId(user.getId())
+                      .username(info.getNickname())
+                      .imgUrl(info.getImgUrl())
+                      .isLeader(false)
+                      .joinedDaysAgo((int) DAYS.between(member.getCreatedAt().toLocalDate(), LocalDate.now()))
+                      .kickedAt(member.getKickedAt())
+                      .build();
+            })
+            .toList();
+  }
+
 }
