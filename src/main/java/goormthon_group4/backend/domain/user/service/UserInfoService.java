@@ -7,9 +7,11 @@ import goormthon_group4.backend.domain.user.dto.response.MypageFullResponseDto;
 import goormthon_group4.backend.domain.user.dto.response.UserInfoResponseDto;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.domain.user.entity.UserInfo;
+import goormthon_group4.backend.domain.user.exception.UserErrorCode;
 import goormthon_group4.backend.domain.user.repository.UserInfoRepository;
 import goormthon_group4.backend.domain.user.repository.UserRepository;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
+import goormthon_group4.backend.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,7 @@ public class UserInfoService {
         User user = customUserDetails.getUser();
 
         if (userInfoRepository.existsByNickname(userInfoRequestDto.getNickname())) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+            throw new CustomException(UserErrorCode.DUPLICATE_NICKNAME);
         }
 
         UserInfo userInfo = UserInfo.builder()
@@ -49,7 +51,7 @@ public class UserInfoService {
         User user = customUserDetails.getUser();
 
         UserInfo userInfo = userInfoRepository.findByUser(user)
-                .orElseThrow(()-> new RuntimeException("UserInfo를 찾을 수 없습니다."));
+                .orElseThrow(()-> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
         return new UserInfoResponseDto(userInfo);
     }
@@ -58,11 +60,11 @@ public class UserInfoService {
         User user = customUserDetails.getUser();
 
         UserInfo userInfo = userInfoRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("UserInfo를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
         if (!userInfo.getNickname().equals(userInfoRequestDto.getNickname()) &&
                 userInfoRepository.existsByNickname(userInfoRequestDto.getNickname())) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+            throw new CustomException(UserErrorCode.DUPLICATE_NICKNAME);
         }
 
         userInfo.update(
@@ -78,7 +80,7 @@ public class UserInfoService {
 
         // 세션 안에서 다시 영속화
         User managedUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
 
         // 해당 유저가 작성한 모든 지원서 조회
