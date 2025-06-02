@@ -8,6 +8,7 @@ import goormthon_group4.backend.domain.project.entity.Project;
 import goormthon_group4.backend.domain.project.repository.ProjectRepository;
 import goormthon_group4.backend.domain.s3.service.S3Service;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
+import goormthon_group4.backend.domain.team.dto.request.TeamUpdateOnlyStatusRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.MyTeamResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
@@ -66,6 +67,31 @@ public class TeamService {
         .orElseThrow(() -> new CustomException(TeamErrorCode.TEAM_NOT_FOUND));
   }
 
+  // ✅ 공통 검증 로직
+  private Team validateTeamLeader(Long teamId, Long userId) {
+    Team team = getTeamById(teamId);
+    if (!Objects.equals(team.getLeader().getId(), userId)) {
+      throw new CustomException(ErrorCode.DONT_HAVE_GRANTED);
+    }
+    return team;
+  }
+
+  // ✅ 전체 필드 업데이트
+  private void updateTeamFields(Team team, TeamUpdateRequest request) {
+    team.setTitle(request.getTitle());
+    team.setStatus(request.getStatus());
+    team.setContent(request.getContent());
+    team.setMaxUserCount(request.getMaxUserCount());
+    team.setStartAt(request.getStartAt());
+    team.setEndAt(request.getEndAt());
+    team.setFileUrl(request.getFileUrl());
+  }
+
+  // ✅ 상태만 업데이트
+  private void updateTeamStatus(Team team, TeamUpdateOnlyStatusRequest request) {
+    team.setStatus(request.getStatus());
+  }
+
   @Transactional
   public TeamCreateResponse create(Long leaderId, TeamCreateRequest requestDto) {
     User user = getUserById(leaderId);
@@ -109,21 +135,15 @@ public class TeamService {
 
   @Transactional
   public TeamUpdateResponse update(Long id, Long userId, TeamUpdateRequest request) {
-    Team team = getTeamById(id);
+    Team team = validateTeamLeader(id, userId);
+    updateTeamFields(team, request); // 전체 업데이트
+    return new TeamUpdateResponse(team);
+  }
 
-    if (!Objects.equals(team.getLeader().getId(), userId)) {
-      throw new CustomException(ErrorCode.DONT_HAVE_GRANTED);
-    }
-
-    // 요청 값을 기반으로 팀 정보 업데이트
-    team.setTitle(request.getTitle());
-    team.setContent(request.getContent());
-    team.setMaxUserCount(request.getMaxUserCount());
-    team.setStartAt(request.getStartAt());
-    team.setEndAt(request.getEndAt());
-    team.setFileUrl(request.getFileUrl());
-
-    // 응답 객체로 변환하여 반환
+  @Transactional
+  public TeamUpdateResponse updateOnlyStatus(Long id, Long userId, TeamUpdateOnlyStatusRequest request) {
+    Team team = validateTeamLeader(id, userId);
+    updateTeamStatus(team, request); // 상태만 업데이트
     return new TeamUpdateResponse(team);
   }
 

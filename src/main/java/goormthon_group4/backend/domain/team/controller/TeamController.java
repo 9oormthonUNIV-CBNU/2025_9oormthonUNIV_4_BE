@@ -2,6 +2,7 @@ package goormthon_group4.backend.domain.team.controller;
 
 import goormthon_group4.backend.domain.team.dto.request.OutputUploadDto;
 import goormthon_group4.backend.domain.team.dto.request.TeamCreateRequest;
+import goormthon_group4.backend.domain.team.dto.request.TeamUpdateOnlyStatusRequest;
 import goormthon_group4.backend.domain.team.dto.request.TeamUpdateRequest;
 import goormthon_group4.backend.domain.team.dto.response.MyTeamResponse;
 import goormthon_group4.backend.domain.team.dto.response.TeamCreateResponse;
@@ -53,6 +54,19 @@ public class TeamController {
     TeamUpdateResponse responseDto = teamService.update(id,userDetails.getUser().getId(),request);
     return ApiResponse.success(responseDto);
   }
+
+  @Operation(summary = "팀 상태만을 변경하기", description = "팀 상태만 변경합니다.")
+  @PutMapping("/{id}/status")
+  public ApiResponse<TeamUpdateResponse> updateOnlyStatus(
+      @PathVariable Long id,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @RequestBody TeamUpdateOnlyStatusRequest request
+  )
+  {
+    TeamUpdateResponse responseDto = teamService.updateOnlyStatus(id,userDetails.getUser().getId(),request);
+    return ApiResponse.success(responseDto);
+  }
+
 
 
   @Operation(summary = "팀 삭제하기", description = "팀을 삭제 합니다.")
@@ -111,4 +125,6 @@ public class TeamController {
     teamService.deleteAllOutputsByTeam(teamId, userDetails.getUser());
     return ApiResponse.success("해당 팀의 모든 산출물이 삭제되었습니다.");
   }
+
+
 }

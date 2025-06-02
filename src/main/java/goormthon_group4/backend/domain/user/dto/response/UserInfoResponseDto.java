@@ -9,6 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class UserInfoResponseDto {
+    private Long userId;
     private String nickname;
     private String major;
     private String university;
@@ -16,6 +17,7 @@ public class UserInfoResponseDto {
     private String imgUrl;
 
     public UserInfoResponseDto(UserInfo userInfo) {
+        this.userId = userInfo.getUser().getId();
         this.nickname = userInfo.getNickname();
         this.major = userInfo.getMajor();
         this.university = userInfo.getUniversity();
