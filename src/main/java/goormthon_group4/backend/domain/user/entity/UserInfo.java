@@ -27,6 +27,7 @@ public class UserInfo extends BaseEntity {
     @Column(length = 50, nullable = false)
     private String university;
 
+    @Setter
     @Column(columnDefinition = "TEXT")
     private String introduce;
 

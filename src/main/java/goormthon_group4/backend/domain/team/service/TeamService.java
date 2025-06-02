@@ -3,7 +3,6 @@ package goormthon_group4.backend.domain.team.service;
 import goormthon_group4.backend.domain.member.dto.MemberResponseDto;
 import goormthon_group4.backend.domain.member.entity.Member;
 import goormthon_group4.backend.domain.notify.dto.NotifySummaryDto;
-import goormthon_group4.backend.domain.notify.repository.NotifyRepository;
 import goormthon_group4.backend.domain.notify.service.NotifyService;
 import goormthon_group4.backend.domain.project.entity.Project;
 import goormthon_group4.backend.domain.project.repository.ProjectRepository;
@@ -215,9 +214,14 @@ public class TeamService {
   }
 
   @Transactional
-  public void deleteOutput(Long outputId, User user) {
+  public void deleteOutput(Long teamId, Long outputId, User user) {
     Output output = outputRepository.findById(outputId)
             .orElseThrow(() -> new CustomException(TeamErrorCode.OUTPUT_NOT_FOUND));
+
+    // 팀 ID 일치 여부 검증
+    if (!output.getTeam().getId().equals(teamId)) {
+      throw new CustomException(TeamErrorCode.OUTPUT_NOT_IN_TEAM);
+    }
 
     // 권한 검사
     if (!output.getTeam().getLeader().getId().equals(user.getId())) {

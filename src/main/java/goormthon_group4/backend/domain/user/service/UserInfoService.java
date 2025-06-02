@@ -89,4 +89,14 @@ public class UserInfoService {
         // DTO로 변환 후 반환
         return MypageFullResponseDto.from(user, applications);
     }
+
+    @Transactional
+    public void updateIntroduce(String introduce, CustomUserDetails customUserDetails) {
+        User user = customUserDetails.getUser();
+
+        UserInfo userInfo = userInfoRepository.findByUser(user)
+                .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+
+        userInfo.setIntroduce(introduce);
+    }
 }
