@@ -57,4 +57,5 @@ public class ApplicationResponseDto {
                 .teamId(application.getTeam().getId())
                 .submittedAt(application.getCreatedAt())  // createdAt도 매핑해주면 좋음
                 .build();
-    }}
+    }
+}

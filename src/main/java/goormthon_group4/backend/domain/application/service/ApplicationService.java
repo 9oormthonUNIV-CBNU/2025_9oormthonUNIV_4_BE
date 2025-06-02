@@ -140,6 +140,17 @@ public class ApplicationService {
         return request;
     }
 
+    @Transactional(readOnly = true)
+    public List<ApplicationResponseDto> getNonAcceptedApplicaationsByTeamId(Long teamId, CustomUserDetails userDetails) {
+        Team team = getTeamOrThrow(teamId);
+        checkTeamLeader(team, userDetails.getUser());
+
+        return applicationRepository.findAllByTeam(team).stream()
+                .filter(app -> app.getStatus() != ApplicationStatus.ACCEPT)
+                .map(ApplicationResponseDto::from)
+                .collect(Collectors.toList());
+    }
+
     // =========================== ⬇️ 헬퍼 메서드 정리 ⬇️ ===========================
 
     private Team getTeamOrThrow(Long teamId) {

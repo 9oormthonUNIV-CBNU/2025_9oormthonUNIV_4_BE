@@ -52,7 +52,7 @@ public class ApplicationController {
     public ApiResponse<List<ApplicationResponseDto>> getApplications(
             @PathVariable Long teamId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        List<ApplicationResponseDto> responses = applicationService.getApplicationsByTeamId(teamId, customUserDetails);
+        List<ApplicationResponseDto> responses = applicationService.getNonAcceptedApplicaationsByTeamId(teamId, customUserDetails);
         return ApiResponse.success(responses);
     }
 
