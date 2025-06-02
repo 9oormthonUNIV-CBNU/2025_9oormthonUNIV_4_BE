@@ -9,6 +9,7 @@ import goormthon_group4.backend.domain.application.repository.ApplicationReposit
 import goormthon_group4.backend.domain.member.entity.Member;
 import goormthon_group4.backend.domain.s3.service.S3Service;
 import goormthon_group4.backend.domain.team.entity.Team;
+import goormthon_group4.backend.domain.team.entity.TeamStatus;
 import goormthon_group4.backend.domain.team.exception.TeamErrorCode;
 import goormthon_group4.backend.domain.team.repository.TeamRepository;
 import goormthon_group4.backend.domain.user.entity.User;
@@ -136,6 +137,13 @@ public class ApplicationService {
                 // 양방향 관계 모두 추가
                 user.getMembers().add(member);
                 team.getMembers().add(member);
+            }
+            long currentMemberCount = team.getMembers().stream()
+                    .filter(m -> m.getKickedAt() == null)
+                    .count();
+
+            if (currentMemberCount >= team.getMaxUserCount()) {
+                team.setStatus(TeamStatus.TERMINAL);
             }
         }
         return request;
