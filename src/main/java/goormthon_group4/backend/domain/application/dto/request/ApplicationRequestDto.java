@@ -1,10 +1,16 @@
 package goormthon_group4.backend.domain.application.dto.request;
 
 
+import goormthon_group4.backend.domain.application.dto.response.ApplicationResponseDto;
+import goormthon_group4.backend.domain.application.entity.Application;
+import goormthon_group4.backend.domain.user.entity.User;
+import goormthon_group4.backend.domain.user.entity.UserInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,5 +28,5 @@ public class ApplicationRequestDto {
     private String strengthsExperience;
     private String additionalInfo;
 
-    private MultipartFile file; // 첨부파일
+    private List<MultipartFile> fileUrls;
 }

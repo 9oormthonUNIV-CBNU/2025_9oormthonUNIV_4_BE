@@ -3,21 +3,15 @@ package goormthon_group4.backend.domain.application.entity;
 import goormthon_group4.backend.domain.team.entity.Team;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.global.common.base.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -61,8 +55,13 @@ public class Application extends BaseEntity {
   @Column(nullable = false)
   private String strengthsExperience;
 
-  @Column(length = 1000, nullable = true)
-  private String fileUrl; // nullable
+//  @Column(length = 2048, nullable = true)
+//  private String fileUrl; // nullable
+
+  @ElementCollection
+  @CollectionTable(name = "application_file_urls", joinColumns = @JoinColumn(name = "application_id"))
+  @Column(name = "file_url", length = 2048) // ✅ 길이 늘리기
+  private List<String> fileUrls = new ArrayList<>();
 
   @Column(nullable = true)
   private String additionalInfo; // nullable

@@ -31,8 +31,8 @@ public class ApplicationController {
             @ModelAttribute ApplicationRequestDto applicationRequestDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        MultipartFile file = applicationRequestDto.getFile(); // null일 수 있음
-        ApplicationResponseDto applicationResponseDto = applicationService.submitApplication(teamId, applicationRequestDto, customUserDetails, file);
+        List<MultipartFile> files = applicationRequestDto.getFileUrls(); // null일 수 있음
+        ApplicationResponseDto applicationResponseDto = applicationService.submitApplication(teamId, applicationRequestDto, customUserDetails, files);
         return ApiResponse.success(applicationResponseDto);
     }
 
@@ -52,7 +52,7 @@ public class ApplicationController {
     public ApiResponse<List<ApplicationResponseDto>> getApplications(
             @PathVariable Long teamId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        List<ApplicationResponseDto> responses = applicationService.getApplicationsByTeamId(teamId, customUserDetails);
+        List<ApplicationResponseDto> responses = applicationService.getNonAcceptedApplicaationsByTeamId(teamId, customUserDetails);
         return ApiResponse.success(responses);
     }
 
