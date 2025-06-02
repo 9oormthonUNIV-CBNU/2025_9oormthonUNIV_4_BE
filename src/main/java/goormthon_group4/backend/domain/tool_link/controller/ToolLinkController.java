@@ -51,7 +51,7 @@ public class ToolLinkController {
   }
 
   @Operation(summary = "협업링크 생성", description = "협업링크를 생성합니다.")
-  @PostMapping("/{teamId}")
+  @PostMapping("/teams/{teamId}")
   public ApiResponse<ToolLinkResponse> createToolLink(
       @RequestBody ToolLinkCreateRequest toolLinkCreateRequest,
       @PathVariable Long teamId,
