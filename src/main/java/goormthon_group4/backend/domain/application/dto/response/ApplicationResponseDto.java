@@ -25,6 +25,7 @@ public class ApplicationResponseDto {
     private String purpose;
     private String skillExperience;
     private String strengthsExperience;
+    private String additionalInfo;
 
     private String fileUrl;
     private ApplicationStatus status;
@@ -49,6 +50,7 @@ public class ApplicationResponseDto {
                 .purpose(application.getPurpose())
                 .skillExperience(application.getSkillExperience())
                 .strengthsExperience(application.getStrengthsExperience())
+                .additionalInfo(application.getAdditionalInfo())
                 .fileUrl(application.getFileUrl())
                 .status(application.getStatus())
                 .userId(user.getId())
