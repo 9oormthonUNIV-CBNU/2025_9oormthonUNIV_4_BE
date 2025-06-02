@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,6 +28,5 @@ public class ApplicationRequestDto {
     private String strengthsExperience;
     private String additionalInfo;
 
-    private MultipartFile file; // 첨부파일
-
+    private List<MultipartFile> fileUrls;
 }

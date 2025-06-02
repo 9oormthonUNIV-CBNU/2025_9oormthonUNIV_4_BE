@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,11 +39,11 @@ public class ApplicationService {
     public ApplicationResponseDto submitApplication(Long teamId,
                                                     ApplicationRequestDto requestDto,
                                                     CustomUserDetails userDetails,
-                                                    MultipartFile file) {
+                                                    List<MultipartFile> files) {
         Team team = getTeamOrThrow(teamId);
         User user = userDetails.getUser();
 
-        String fileUrl = uploadFileIfPresent(file);
+        List<String> fileUrls = uploadFilesIfPresent(files);
 
         Application application = Application.builder()
                 .status(ApplicationStatus.PENDING)
@@ -56,7 +57,7 @@ public class ApplicationService {
                 .skillExperience(requestDto.getSkillExperience())
                 .strengthsExperience(requestDto.getStrengthsExperience())
                 .additionalInfo(requestDto.getAdditionalInfo())
-                .fileUrl(fileUrl)
+                .fileUrls(fileUrls)
                 .build();
 
         applicationRepository.save(application);
@@ -169,10 +170,13 @@ public class ApplicationService {
         }
     }
 
-    private String uploadFileIfPresent(MultipartFile file) {
-        if (file != null && !file.isEmpty()) {
-            return s3Service.uploadFile(file);
+    private List<String> uploadFilesIfPresent(List<MultipartFile> files) {
+        if (files != null && !files.isEmpty()) {
+            return files.stream()
+                    .filter(file -> !file.isEmpty())
+                    .map(s3Service::uploadFile)
+                    .collect(Collectors.toList());
         }
-        return null;
+        return new ArrayList<>();
     }
 }

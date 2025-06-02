@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -27,7 +28,7 @@ public class ApplicationResponseDto {
     private String strengthsExperience;
     private String additionalInfo;
 
-    private String fileUrl;
+    private List<String> fileUrls;
     private ApplicationStatus status;
 
     private Long userId;
@@ -51,7 +52,7 @@ public class ApplicationResponseDto {
                 .skillExperience(application.getSkillExperience())
                 .strengthsExperience(application.getStrengthsExperience())
                 .additionalInfo(application.getAdditionalInfo())
-                .fileUrl(application.getFileUrl())
+                .fileUrls(application.getFileUrls())
                 .status(application.getStatus())
                 .userId(user.getId())
                 .teamId(application.getTeam().getId())

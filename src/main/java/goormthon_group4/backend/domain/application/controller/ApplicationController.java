@@ -31,8 +31,8 @@ public class ApplicationController {
             @ModelAttribute ApplicationRequestDto applicationRequestDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        MultipartFile file = applicationRequestDto.getFile(); // null일 수 있음
-        ApplicationResponseDto applicationResponseDto = applicationService.submitApplication(teamId, applicationRequestDto, customUserDetails, file);
+        List<MultipartFile> files = applicationRequestDto.getFileUrls(); // null일 수 있음
+        ApplicationResponseDto applicationResponseDto = applicationService.submitApplication(teamId, applicationRequestDto, customUserDetails, files);
         return ApiResponse.success(applicationResponseDto);
     }
 
