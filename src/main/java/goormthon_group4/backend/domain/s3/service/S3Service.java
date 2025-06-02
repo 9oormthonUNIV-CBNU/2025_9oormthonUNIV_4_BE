@@ -15,7 +15,6 @@ import software.amazon.awssdk.transfer.s3.model.UploadFileRequest;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,8 +56,24 @@ public class S3Service {
 
       return fileUrl;
     } catch (Exception e) {
+      e.printStackTrace();
       throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
     }
 
+  }
+
+  public void deleteFile(String fileUrl) {
+    try {
+      // s3 버킷에서 key 추출
+      String key = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+
+      // s3에서 삭제
+      s3Client.deleteObject(b -> b
+              .bucket(bucket)
+              .key(key)
+      );
+    } catch (Exception e) {
+      throw new CustomException(ErrorCode.FILE_DELETE_FAILED);
+    }
   }
 }

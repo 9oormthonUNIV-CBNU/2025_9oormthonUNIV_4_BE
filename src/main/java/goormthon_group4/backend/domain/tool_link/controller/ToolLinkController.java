@@ -32,23 +32,26 @@ public class ToolLinkController {
   private final ToolLinkService toolLinkService;
 
   @Operation(summary = "협업링크 조회", description = "협업링크들을 조회합니다.(페이지 네이션)")
-  @GetMapping
-  public ApiResponse<Page<ToolLinkResponse>> getToolLinks(
+  @GetMapping("/teams/{teamId}")
+  public ApiResponse<Page<ToolLinkResponse>> getToolLinksByTeamId(
+      @PathVariable Long teamId,
       @RequestParam(defaultValue = "1") int page
   ) {
     int pageIndex = Math.max(0, page - 1);
-    Page<ToolLinkResponse> toolLinks = toolLinkService.getToolLinks(pageIndex);
+    Page<ToolLinkResponse> toolLinks = toolLinkService.getToolLinksByTeamId(teamId,pageIndex);
     return ApiResponse.success(toolLinks);
   }
 
   @Operation(summary = "협업링크 조회2", description = "협업링크들을 조회합니다.")
-  @GetMapping("/all")
-  public ApiResponse<List<ToolLinkResponse>> getAllToolLinks() {
-    return ApiResponse.success(toolLinkService.getAllToolLinks());
+  @GetMapping("/all/teams/{teamId}")
+  public ApiResponse<List<ToolLinkResponse>> getAllToolLinksByTeamId(
+      @PathVariable Long teamId
+  ) {
+    return ApiResponse.success(toolLinkService.getAllToolLinksByTeamId(teamId));
   }
 
   @Operation(summary = "협업링크 생성", description = "협업링크를 생성합니다.")
-  @PostMapping("/{teamId}")
+  @PostMapping("/teams/{teamId}")
   public ApiResponse<ToolLinkResponse> createToolLink(
       @RequestBody ToolLinkCreateRequest toolLinkCreateRequest,
       @PathVariable Long teamId,

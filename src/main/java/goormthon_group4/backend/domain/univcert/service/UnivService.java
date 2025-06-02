@@ -3,9 +3,11 @@ package goormthon_group4.backend.domain.univcert.service;
 import com.univcert.api.UnivCert;
 import goormthon_group4.backend.domain.univcert.dto.UnivCodeRequestDto;
 import goormthon_group4.backend.domain.univcert.dto.UnivRequestDto;
+import goormthon_group4.backend.domain.univcert.exception.UnivCertErrorCode;
 import goormthon_group4.backend.domain.user.entity.User;
 import goormthon_group4.backend.domain.user.repository.UserRepository;
 import goormthon_group4.backend.global.auth.CustomUserDetails;
+import goormthon_group4.backend.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -51,10 +53,10 @@ public class UnivService {
         boolean success = (boolean) response.get("success");
         String message = (String) response.get("message");
         if(!success) {
-            throw new IllegalArgumentException("인증 코드 확인 실패 : " + message);
+            throw new CustomException(UnivCertErrorCode.UNIV_CODE_FAILED, message);
         }
         User user = userRepository.findByEmail(customUserDetails.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(UnivCertErrorCode.USER_NOT_FOUND));
 
         user.authenticateUniversity();
     }
@@ -63,7 +65,7 @@ public class UnivService {
         boolean success = (boolean) response.get("success");
         String message = (String) response.get("message");
         if(!success) {
-            throw new IllegalArgumentException("학교 인증 실패 : " + message);
+            throw new CustomException(UnivCertErrorCode.UNIV_CODE_FAILED, message);
         }
     }
 
@@ -75,7 +77,7 @@ public class UnivService {
         String message = (String) response.get("message");
 
         if (!success) {
-            throw new IllegalArgumentException("학교 인증 초기화 실패 : " + message);
+            throw new CustomException(UnivCertErrorCode.UNIV_CLEAR_FAILED, message);
         }
 
         return "학교 인증 정보가 초기화되었습니다.";

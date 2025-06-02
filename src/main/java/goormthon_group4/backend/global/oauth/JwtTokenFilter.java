@@ -66,7 +66,7 @@ public class JwtTokenFilter extends GenericFilterBean {
             String email = claims.getSubject();
 
             User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다." + email));
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
             CustomUserDetails customUserDetails = new CustomUserDetails(user);
 

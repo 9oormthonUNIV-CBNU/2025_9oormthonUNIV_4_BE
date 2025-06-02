@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,15 +39,15 @@ public class ToolLinkService {
 
 
   @Transactional()
-  public Page<ToolLinkResponse> getToolLinks(int page) {
-    Pageable pageable = PageRequest.of(page, PAGE_SIZE);
-    Page<ToolLink> toolLinks = toolLinkRepository.findAll(pageable);
+  public Page<ToolLinkResponse> getToolLinksByTeamId(Long teamId ,int page) {
+    Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
+    Page<ToolLink> toolLinks = toolLinkRepository.findByTeamIdOrderByCreatedAtDesc(teamId,pageable);
     return toolLinks.map(this::mapToResponse);
   }
 
   @Transactional()
-  public List<ToolLinkResponse> getAllToolLinks() {
-    List<ToolLink> toolLinks = toolLinkRepository.findAll();
+  public List<ToolLinkResponse> getAllToolLinksByTeamId(Long teamId) {
+    List<ToolLink> toolLinks = toolLinkRepository.findByTeamIdOrderByCreatedAtDesc(teamId);
     return toolLinks.stream().map(this::mapToResponse).collect(Collectors.toList());
   }
 
