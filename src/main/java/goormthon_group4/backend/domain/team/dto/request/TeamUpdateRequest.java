@@ -1,5 +1,6 @@
 package goormthon_group4.backend.domain.team.dto.request;
 
+import goormthon_group4.backend.domain.team.entity.TeamStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -25,6 +26,9 @@ public class TeamUpdateRequest {
 
   @NotBlank
   private String content;
+
+  @NotNull
+  private TeamStatus status;
 
   private String fileUrl;  // 선택적
 
