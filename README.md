@@ -5,14 +5,14 @@ MUSTEP의 백엔드 레포지토리입니다. 기업 연계 프로젝트 기반�
 ⸻
 
 🏗️ 기술 스택
-	•	Java 21 / Spring Boot 3.4.5
-	•	Gradle
-	•	Spring Security + OAuth2 (Google Login)
-	•	JPA (Hibernate)
-	•	MySQL / AWS RDS
-	•	AWS S3 (파일 업로드)
-	•	Docker / Docker Hub / GitHub Actions
-	•	AWS EC2
+•Java 21 / Spring Boot 3.4.5
+•Gradle
+•Spring Security + OAuth2 (Google Login)
+•JPA (Hibernate)
+•MySQL / AWS RDS
+•AWS S3 (파일 업로드)
+•Docker / Docker Hub / GitHub Actions
+•AWS EC2
 
 ⸻
 
